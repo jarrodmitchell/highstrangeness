@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.user_auth.sign_up.SignUpFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:id="@+id/textViewHeaderSignUpScreen"
+        style="@style/HeaderBase.Black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign Up"
+
+        android:layout_marginTop="78dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/editTextTextEmailAddressSignUpScreen"
+        />
+
+
+    <EditText
+        android:id="@+id/editTextTextEmailAddressSignUpScreen"
+        style="@style/EditTextCustom"
+        android:inputType="textEmailAddress"
+        android:hint="Email"
+
+        android:layout_marginBottom="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/editTextTextUsernameSignUpScreen"/>
+
+    <EditText
+        android:id="@+id/editTextTextUsernameSignUpScreen"
+        style="@style/EditTextCustom"
+        android:inputType="text"
+        android:hint="Username"
+
+        android:layout_marginBottom="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/editTextTextPasswordSignUpScreen"/>
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/editTextTextPasswordSignUpScreen"
+        style="@style/EditTextCustom"
+        android:inputType="textPassword"
+        android:hint="Password"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonSignUpSignUpScreen"
+        style="@style/ButtonStandard"
+        android:background="@drawable/button_shape_standard"
+        android:text="Sign Up"
+
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/editTextTextPasswordSignUpScreen"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <View
+        android:id="@+id/dividerSignUpScreen"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+
+        app:layout_constraintTop_toBottomOf="@id/buttonSignUpSignUpScreen"
+        app:layout_constraintBottom_toTopOf="@id/buttonLogInSignUpScreen"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonLogInSignUpScreen"
+        style="@style/ButtonInverse"
+        android:background="@drawable/button_shape_inverse"
+        android:text="Log In"
+        android:padding="4dp"
+
+        android:layout_marginTop="64dp"
+        app:layout_constraintTop_toBottomOf="@id/buttonSignUpSignUpScreen"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonSkipSignUpScreen"
+        style="@style/BorderlessButton"
+        android:text="Skip"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

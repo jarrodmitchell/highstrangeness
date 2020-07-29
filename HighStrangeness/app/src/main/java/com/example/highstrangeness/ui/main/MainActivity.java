@@ -1,7 +1,8 @@
-package com.example.highstrangeness;
+package com.example.highstrangeness.ui.main;
 
 import android.os.Bundle;
 
+import com.example.highstrangeness.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;

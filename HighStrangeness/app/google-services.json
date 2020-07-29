@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "599882600949",
+    "firebase_url": "https://highstrangeness333.firebaseio.com",
+    "project_id": "highstrangeness333",
+    "storage_bucket": "highstrangeness333.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599882600949:android:cf9cdd5122c003063610bc",
+        "android_client_info": {
+          "package_name": "com.example.highstrangeness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599882600949-8va3hsde9nv049f3rhm91bradtk5feu3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.highstrangeness",
+            "certificate_hash": "e3b80c7add4c57513b6ee97877da18cb15ba3433"
+          }
+        },
+        {
+          "client_id": "599882600949-v26hk3brf0bvdlp89fkhj7d4csk1u225.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_-5yt__rMEXgjFlDFfXtPdQsjYa96p7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599882600949-v26hk3brf0bvdlp89fkhj7d4csk1u225.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
