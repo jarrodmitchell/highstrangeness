@@ -1,5 +1,9 @@
 package com.example.highstrangeness.ui.user_auth.login;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -14,6 +18,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.highstrangeness.R;
+import com.example.highstrangeness.ui.user_auth.sign_up.SignUpFragment;
+import com.example.highstrangeness.utilities.FormValidationUtility;
+import com.example.highstrangeness.utilities.UserAuthUtility;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,11 +29,18 @@ import com.example.highstrangeness.R;
  */
 public class LoginFragment extends Fragment {
 
+    public static final String INTENT_FILTER = "LOG IN RESPONSE";
+
     public interface LoginListener {
         void login(String email, String password);
     }
+    public interface DisplaySignUpFragmentListener {
+        void displaySignUp();
+    }
 
     LoginListener loginListener;
+    DisplaySignUpFragmentListener displaySignUpFragmentListener;
+    LoginResponseReceiver loginResponseReceiver;
     EditText editTextEmail;
     EditText editTextPassword;
     Button buttonSignUp;
@@ -56,8 +70,11 @@ public class LoginFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             loginListener = (LoginListener) getActivity();
+            displaySignUpFragmentListener = (DisplaySignUpFragmentListener) getActivity();
             editTextEmail = (EditText) getActivity().findViewById(R.id.editTextTextEmailAddressLogIn);
             editTextPassword =  (EditText) getActivity().findViewById(R.id.editTextTextPasswordLogIn);
+            loginResponseReceiver = new LoginFragment.LoginResponseReceiver();
+            getActivity().registerReceiver(loginResponseReceiver, new IntentFilter(INTENT_FILTER));
 
             //Login Button Tapped
             getActivity().findViewById(R.id.buttonLogInLogIn).setOnClickListener(new View.OnClickListener() {
@@ -67,36 +84,41 @@ public class LoginFragment extends Fragment {
                     String password  = editTextPassword.getText().toString();
 
                     //Validate input values
-                    if (validateEmail(email) && validatePassword(password)) {
+                    if (FormValidationUtility.validateEmail(email, editTextEmail) &&
+                            FormValidationUtility.validatePassword(password, editTextPassword)) {
+                        //Attempt to log in
                         loginListener.login(email, password);
                     }
                 }
             });
 
+            //Sign Up Button Tapped
+            getActivity().findViewById(R.id.buttonSignUpLogIn).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Navigate to sign up screen
+                    displaySignUpFragmentListener.displaySignUp();
+                }
+            });
 
-            buttonSignUp = (Button) getActivity().findViewById(R.id.buttonSignUpLogIn);
             buttonForgotPassword = (Button) getActivity().findViewById(R.id.buttonForgotPassword);
         }
     }
 
-    private boolean validateEmail(String email) {
-        if (TextUtils.isEmpty(email)) {
-            editTextEmail.setError("Email cannot be empty");
-            return false;
-        }else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            editTextEmail.setError("Invalid Email");
-            return false;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (getActivity() != null) {
+            getActivity().unregisterReceiver(loginResponseReceiver);
         }
-        editTextEmail.setError(null);
-        return true;
     }
 
-    private boolean validatePassword(String password)  {
-        if (TextUtils.isEmpty(password)) {
-            editTextPassword.setError("Password cannot be empty");
-            return false;
+    public class LoginResponseReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction() != null && intent.getAction().equals(INTENT_FILTER)) {
+                editTextEmail.setError(intent.getStringExtra(UserAuthUtility.LOG_IN_INTENT_EXTRA));
+            }
         }
-        editTextPassword.setError(null);
-        return true;
     }
 }

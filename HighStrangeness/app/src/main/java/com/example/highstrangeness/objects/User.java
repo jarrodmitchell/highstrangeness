@@ -2,19 +2,14 @@ package com.example.highstrangeness.objects;
 
 public class User {
 
-    public User getCurrentUser() {
-        return currentUser;
-    }
-
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
-    }
-
-    User currentUser = null;
-
+    public static User currentUser = null;
     String id;
     String email;
     String username;
+
+    public User() {
+
+    }
 
     public User(String id, String email, String username) {
         this.id = id;

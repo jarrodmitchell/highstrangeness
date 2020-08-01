@@ -1,14 +1,23 @@
 package com.example.highstrangeness.ui.user_auth.sign_up;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.highstrangeness.R;
+import com.example.highstrangeness.utilities.FormValidationUtility;
+import com.example.highstrangeness.utilities.UserAuthUtility;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,44 +27,35 @@ import com.example.highstrangeness.R;
 public class
 SignUpFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public static final String INTENT_FILTER = "SIGN_UP_RESPONSE";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public interface SignUpListener {
+        public void signUp(String email, String username, String password);
+    }
+
+    public interface DisplayLoginFragmentListener {
+        void displayLogIn();
+    }
+
+    SignUpListener signUpListener;
+    DisplayLoginFragmentListener displayLoginFragmentListener;
+    SignUpResponseReceiver signUpResponseReceiver;
+    EditText editTextEmail;
+    EditText editTextUsername;
+    EditText editTextPassword;
+    Button buttonSignUp;
+    Button buttonLogIn;
+    Button buttonSkip;
 
     public SignUpFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SignUpFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SignUpFragment newInstance(String param1, String param2) {
+    public static SignUpFragment newInstance() {
         SignUpFragment fragment = new SignUpFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -63,5 +63,59 @@ SignUpFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_sign_up, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (getActivity() != null) {
+            signUpListener = (SignUpListener) getActivity();
+            displayLoginFragmentListener = (DisplayLoginFragmentListener) getActivity();
+            editTextEmail = (EditText) getActivity().findViewById(R.id.editTextTextEmailAddressSignUpScreen);
+            editTextUsername = (EditText) getActivity().findViewById(R.id.editTextTextUsernameSignUpScreen);
+            editTextPassword = (EditText) getActivity().findViewById(R.id.editTextTextPasswordSignUpScreen);
+            signUpResponseReceiver = new SignUpResponseReceiver();
+            getActivity().registerReceiver(signUpResponseReceiver, new IntentFilter(INTENT_FILTER));
+
+            getActivity().findViewById(R.id.buttonSignUpSignUpScreen).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String email = editTextEmail.getText().toString();
+                    String username = editTextUsername.getText().toString();
+                    String password = editTextPassword.getText().toString();
+
+                    if (FormValidationUtility.validateEmail(email, editTextEmail) &&
+                            FormValidationUtility.validateUsername(username, editTextUsername) &&
+                            FormValidationUtility.validatePasswordCreation(password, editTextPassword)) {
+                        signUpListener.signUp(email, username, password);
+                    }
+                }
+            });
+            getActivity().findViewById(R.id.buttonLogInSignUpScreen).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    displayLoginFragmentListener.displayLogIn();
+                }
+            });
+            buttonSkip = (Button) getActivity().findViewById(R.id.buttonSkipSignUpScreen);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (getActivity() != null) {
+            getActivity().unregisterReceiver(signUpResponseReceiver);
+        }
+    }
+
+    public class SignUpResponseReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction() != null && intent.getAction().equals(INTENT_FILTER)) {
+                editTextEmail.setError(intent.getStringExtra(UserAuthUtility.SIGN_UP_INTENT_EXTRA));
+            }
+        }
     }
 }
