@@ -1,19 +1,38 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
-    <style name="HeaderBase" parent="Widget.AppCompat.TextView">
+    <style name="TitleBase" parent="Widget.AppCompat.TextView">
         <item name="fontFamily">@font/heebo_bold</item>
         <item name="android:textSize">24sp</item>
     </style>
 
-    <style name="HeaderBase.Black" parent="HeaderBase">
+    <style name="TitleBase.Black">
         <item name="android:textColor">@color/black</item>
+    </style>
+    
+    <style name="Header" parent="Widget.AppCompat.TextView">
+        <item name="fontFamily">@font/heebo_bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Header.Black" parent="Header">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="Body" parent="Widget.AppCompat.TextView">
+        <item name="fontFamily">@font/heebo_bold</item>
+        <item name="android:textSize">15sp</item>
     </style>
 
     <style name="ButtonBase">

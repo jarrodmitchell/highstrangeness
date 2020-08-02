@@ -12,8 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.highstrangeness.objects.User;
 import com.example.highstrangeness.ui.user_auth.login.LoginFragment;
 import com.example.highstrangeness.ui.user_auth.sign_up.SignUpFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,6 +30,7 @@ public class UserAuthUtility {
     public UserAuthUtility(AppCompatActivity UserAuthActivity) {
         this.getFirebaseAuthListener = (GetFirebaseAuthListener) UserAuthActivity;
         this.getAuthActivityContext = (GetUserAuthActivityContextListener) UserAuthActivity;
+        this.checkWhetherAUserIsLoggedInListener = (CheckWhetherAUserIsLoggedInListener) UserAuthActivity;
     }
 
     public interface GetFirebaseAuthListener {
@@ -36,9 +39,13 @@ public class UserAuthUtility {
     public interface GetUserAuthActivityContextListener {
         public Context getContext();
     }
+    public interface CheckWhetherAUserIsLoggedInListener {
+        public void checkWhetherUserIsLoggedIn();
+    }
 
     private static FirebaseUser user;
 
+    CheckWhetherAUserIsLoggedInListener checkWhetherAUserIsLoggedInListener;
     GetFirebaseAuthListener getFirebaseAuthListener;
     GetUserAuthActivityContextListener getAuthActivityContext;
 
@@ -61,6 +68,7 @@ public class UserAuthUtility {
                         Log.d(TAG, "signIn: succeeded");
                         user = getFirebaseAuthListener.getFirebaseAuth().getCurrentUser();
                         setCurrentUser(user);
+                        checkWhetherAUserIsLoggedInListener.checkWhetherUserIsLoggedIn();
                     }
                 })
                 .addOnFailureListener((Activity) getAuthActivityContext.getContext(), new OnFailureListener() {
@@ -82,28 +90,27 @@ public class UserAuthUtility {
     }
 
     //sign up to firebase
-    public void signUp(String email, final String username, String password) {
+    public void signUp(final String email, final String username, final String password) {
         getFirebaseAuthListener.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener((Activity) getAuthActivityContext.getContext(), new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
                         // Sign up succeeded
                         Log.d(TAG, "signUp: succeeded");
-                        
-                        if (getFirebaseAuthListener.getFirebaseAuth().getCurrentUser() != null) {
-                            Log.d(TAG, "onSuccess: " + getFirebaseAuthListener.getFirebaseAuth().getCurrentUser().getEmail());
-                        }else {
-                            Log.d(TAG, "onSuccess: No current user");
-                        }
 
                         user = authResult.getUser();
-                        setCurrentUser(user);
+                        getFirebaseAuthListener.getFirebaseAuth().updateCurrentUser(user);
 
                         //set username
                         UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(username).build();
-                        user.updateProfile(userProfileChangeRequest);
+                        user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                setCurrentUser(user);
+                                checkWhetherAUserIsLoggedInListener.checkWhetherUserIsLoggedIn();
+                            }
+                        });
 
-                        setCurrentUser(user);
                     }
                 })
                 .addOnFailureListener((Activity) getAuthActivityContext.getContext(), new OnFailureListener() {
@@ -128,6 +135,7 @@ public class UserAuthUtility {
             String email = currentUser.getEmail();
             String username = currentUser.getDisplayName();
             if (email != null && username != null) {
+                Log.d(TAG, "setCurrentUser: ");
                 Log.d(TAG, email);
                 User.currentUser = new User(id, email, username);
                 user = null;

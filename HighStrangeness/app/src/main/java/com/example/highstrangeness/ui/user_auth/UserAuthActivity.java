@@ -1,10 +1,12 @@
 package com.example.highstrangeness.ui.user_auth;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.objects.User;
@@ -19,15 +21,24 @@ import com.google.firebase.auth.FirebaseAuth;
 public class UserAuthActivity extends AppCompatActivity implements UserAuthUtility.GetFirebaseAuthListener,
         UserAuthUtility.GetUserAuthActivityContextListener, LoginFragment.LoginListener,
         LoginFragment.DisplaySignUpFragmentListener, SignUpFragment.SignUpListener,
-        SignUpFragment.DisplayLoginFragmentListener {
+        SignUpFragment.DisplayLoginFragmentListener,
+        UserAuthUtility.CheckWhetherAUserIsLoggedInListener,
+        LoginFragment.NavigateToResetPasswordActivity {
 
     public static final String TAG = "UserAuthActivity";
+    public static final int REQUEST_CODE_LOGGED_OUT = 0x068;
+
+
+
+    @Override
+    public void checkWhetherUserIsLoggedIn() {
+        checkIfUserIsAlreadySignedIn();
+    }
 
     @Override
     public void signUp(String email, String username, String password) {
         if (NetworkUtility.CheckNetworkConnection(this)) {
             userAuthUtility.signUp(email, username, password);
-            checkIfUserIsAlreadySignedIn();
         };
     }
 
@@ -45,7 +56,6 @@ public class UserAuthActivity extends AppCompatActivity implements UserAuthUtili
     public void login(String email, String password) {
         if (NetworkUtility.CheckNetworkConnection(this)) {
             userAuthUtility.login(email, password);
-            checkIfUserIsAlreadySignedIn();
         }
     }
 
@@ -71,15 +81,16 @@ public class UserAuthActivity extends AppCompatActivity implements UserAuthUtili
         ;
         mAuth = FirebaseAuth.getInstance();
         userAuthUtility  = new UserAuthUtility(this);
-        User user = new User();
         userAuthUtility.checkForCurrentUser();
         checkIfUserIsAlreadySignedIn();
     }
 
     public void checkIfUserIsAlreadySignedIn() {
         if (User.currentUser != null) {
+            Log.d(TAG, "checkIfUserIsAlreadySignedIn: true");
             navigateToMainActivity();
         }else {
+            Log.d(TAG, "checkIfUserIsAlreadySignedIn: false");
             displayLogInFragment();
         }
     }
@@ -99,6 +110,15 @@ public class UserAuthActivity extends AppCompatActivity implements UserAuthUtili
 
     public void navigateToMainActivity() {
         Intent intent = new Intent(UserAuthActivity.this, MainActivity.class);
-        UserAuthActivity.this.startActivity(intent);
+        UserAuthActivity.this.startActivityForResult(intent, REQUEST_CODE_LOGGED_OUT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_LOGGED_OUT) {
+            userAuthUtility.checkForCurrentUser();
+            checkIfUserIsAlreadySignedIn();
+        }
     }
 }

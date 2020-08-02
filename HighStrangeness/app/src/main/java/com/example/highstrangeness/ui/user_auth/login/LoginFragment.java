@@ -34,12 +34,18 @@ public class LoginFragment extends Fragment {
     public interface LoginListener {
         void login(String email, String password);
     }
+
+    public interface NavigateToResetPasswordActivity {
+        void navigateToResetPasswordActivity();
+    }
+
     public interface DisplaySignUpFragmentListener {
         void displaySignUp();
     }
 
     LoginListener loginListener;
     DisplaySignUpFragmentListener displaySignUpFragmentListener;
+    NavigateToResetPasswordActivity navigateToResetPasswordActivity;
     LoginResponseReceiver loginResponseReceiver;
     EditText editTextEmail;
     EditText editTextPassword;
@@ -71,6 +77,7 @@ public class LoginFragment extends Fragment {
         if (getActivity() != null) {
             loginListener = (LoginListener) getActivity();
             displaySignUpFragmentListener = (DisplaySignUpFragmentListener) getActivity();
+            navigateToResetPasswordActivity = (NavigateToResetPasswordActivity) getActivity();
             editTextEmail = (EditText) getActivity().findViewById(R.id.editTextTextEmailAddressLogIn);
             editTextPassword =  (EditText) getActivity().findViewById(R.id.editTextTextPasswordLogIn);
             loginResponseReceiver = new LoginFragment.LoginResponseReceiver();
@@ -101,7 +108,13 @@ public class LoginFragment extends Fragment {
                 }
             });
 
-            buttonForgotPassword = (Button) getActivity().findViewById(R.id.buttonForgotPassword);
+            //Forgot password button tapped
+             getActivity().findViewById(R.id.buttonForgotPassword).setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+                     navigateToResetPasswordActivity.navigateToResetPasswordActivity();
+                 }
+             });
         }
     }
 
