@@ -28,15 +28,11 @@ public class UserAuthUtility {
     private static String message;
 
     public UserAuthUtility(AppCompatActivity UserAuthActivity) {
-        this.getFirebaseAuthListener = (GetFirebaseAuthListener) UserAuthActivity;
         this.getAuthActivityContext = (GetUserAuthActivityContextListener) UserAuthActivity;
         this.checkWhetherAUserIsLoggedInListener = (CheckWhetherAUserIsLoggedInListener) UserAuthActivity;
         this.displayAddProfilePictureFragmentListener = (DisplayAddProfilePictureFragmentListener) UserAuthActivity;
     }
 
-    public interface GetFirebaseAuthListener {
-        public FirebaseAuth getFirebaseAuth();
-    }
     public interface GetUserAuthActivityContextListener {
         public Context getContext();
     }
@@ -48,30 +44,28 @@ public class UserAuthUtility {
     }
 
     private static FirebaseUser user;
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     DisplayAddProfilePictureFragmentListener displayAddProfilePictureFragmentListener;
     CheckWhetherAUserIsLoggedInListener checkWhetherAUserIsLoggedInListener;
-    GetFirebaseAuthListener getFirebaseAuthListener;
     GetUserAuthActivityContextListener getAuthActivityContext;
 
-    public boolean checkForCurrentUser() {
-        user = getFirebaseAuthListener.getFirebaseAuth().getCurrentUser();
+    public void checkForCurrentUser() {
+        user = firebaseAuth.getCurrentUser();
         if (user != null) {
             setCurrentUser(user);
             user = null;
-            return true;
         }
-        return false;
     }
 
     //login to firebase
     public void login(String email, String password) {
-        getFirebaseAuthListener.getFirebaseAuth().signInWithEmailAndPassword(email, password)
+        firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener((Activity) getAuthActivityContext.getContext(), new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
                         Log.d(TAG, "signIn: succeeded");
-                        user = getFirebaseAuthListener.getFirebaseAuth().getCurrentUser();
+                        user = firebaseAuth.getCurrentUser();
                         setCurrentUser(user);
                         checkWhetherAUserIsLoggedInListener.checkWhetherUserIsLoggedIn();
                     }
@@ -96,7 +90,7 @@ public class UserAuthUtility {
 
     //sign up to firebase
     public void signUp(final String email, final String username, final String password) {
-        getFirebaseAuthListener.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener((Activity) getAuthActivityContext.getContext(), new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
@@ -104,7 +98,7 @@ public class UserAuthUtility {
                         Log.d(TAG, "signUp: succeeded");
 
                         user = authResult.getUser();
-                        getFirebaseAuthListener.getFirebaseAuth().updateCurrentUser(user);
+                        firebaseAuth.updateCurrentUser(user);
 
                         //set username
                         UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(username).build();
@@ -148,7 +142,8 @@ public class UserAuthUtility {
         }
     }
 
-    public void updateProfileImage() {
+    public static void updateProfile(String email, String username, Context context) {
+        //set email
 
     }
 }

@@ -1,15 +1,12 @@
 package com.example.highstrangeness.ui.user_auth.add_profile_picture;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +15,6 @@ import android.view.ViewGroup;
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.utilities.StorageUtility;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -37,7 +29,7 @@ public class AddProfilePictureFragment extends Fragment {
     public static final int REQUEST_CODE_FILE_PICKER = 0x073;
 
     public interface NavigateToMainScreenListener {
-        void navigateToMainScreenListener();
+        void navigateToMainScreen();
     }
 
     NavigateToMainScreenListener navigateToMainScreenListener;
@@ -86,7 +78,7 @@ public class AddProfilePictureFragment extends Fragment {
             getActivity().findViewById(R.id.buttonSkipAddProfilePicScreen).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    navigateToMainScreenListener.navigateToMainScreenListener();
+                    navigateToMainScreenListener.navigateToMainScreen();
                 }
             });
         }
@@ -101,17 +93,11 @@ public class AddProfilePictureFragment extends Fragment {
 
             Uri image = data.getData();
             if (image != null) {
-                StorageUtility.updateProfileImage(image, getContext());
-                Log.d(TAG, "onActivityResult: Path = " + image.toString());
+                boolean success = StorageUtility.updateProfileImage(image, getContext());
+                if (success) {
+                    navigateToMainScreenListener.navigateToMainScreen();
+                }
             }
-//            getActivity().findViewById(R.id.imageViewProfilePictureAccountScreen).
-//            Uri uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-//            try{
-//                InputStream is;
-//                Bitmap bitmap = MediaStore.Images.Media.getContentUri()
-//            }catch (IOException e) {
-//                Log.d(TAG, "onActivityResult: " + e.getMessage());
-//            }
 
         }
     }

@@ -23,4 +23,12 @@
     <string name="skip">Skip</string>
     <string name="take_photo">Take Photo</string>
     <string name="from_file">From File</string>
+    <string name="edit">Edit</string>
+    <string name="login">Log In</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="faux_password">00000000</string>
 </resources>

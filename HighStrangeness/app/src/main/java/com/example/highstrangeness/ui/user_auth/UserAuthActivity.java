@@ -20,7 +20,7 @@ import com.example.highstrangeness.utilities.NetworkUtility;
 import com.example.highstrangeness.utilities.UserAuthUtility;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class UserAuthActivity extends AppCompatActivity implements UserAuthUtility.GetFirebaseAuthListener,
+public class UserAuthActivity extends AppCompatActivity implements
         UserAuthUtility.GetUserAuthActivityContextListener, LoginFragment.LoginListener,
         LoginFragment.DisplaySignUpFragmentListener, SignUpFragment.SignUpListener,
         SignUpFragment.DisplayLoginFragmentListener,
@@ -34,7 +34,7 @@ public class UserAuthActivity extends AppCompatActivity implements UserAuthUtili
 
 
     @Override
-    public void navigateToMainScreenListener() {
+    public void navigateToMainScreen() {
         navigateToMainActivity();
     }
 
@@ -68,17 +68,11 @@ public class UserAuthActivity extends AppCompatActivity implements UserAuthUtili
     }
 
     @Override
-    public FirebaseAuth getFirebaseAuth() {
-        return mAuth;
-    }
-
-    @Override
     public Context getContext() {
         return this;
     }
 
 
-    private FirebaseAuth mAuth;
     private UserAuthUtility userAuthUtility;
 
 
@@ -87,7 +81,6 @@ public class UserAuthActivity extends AppCompatActivity implements UserAuthUtili
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_auth);
         ;
-        mAuth = FirebaseAuth.getInstance();
         userAuthUtility  = new UserAuthUtility(this);
         userAuthUtility.checkForCurrentUser();
         checkIfUserIsAlreadySignedIn();
