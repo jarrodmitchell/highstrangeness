@@ -31,6 +31,7 @@ public class UserAuthUtility {
         this.getFirebaseAuthListener = (GetFirebaseAuthListener) UserAuthActivity;
         this.getAuthActivityContext = (GetUserAuthActivityContextListener) UserAuthActivity;
         this.checkWhetherAUserIsLoggedInListener = (CheckWhetherAUserIsLoggedInListener) UserAuthActivity;
+        this.displayAddProfilePictureFragmentListener = (DisplayAddProfilePictureFragmentListener) UserAuthActivity;
     }
 
     public interface GetFirebaseAuthListener {
@@ -42,9 +43,13 @@ public class UserAuthUtility {
     public interface CheckWhetherAUserIsLoggedInListener {
         public void checkWhetherUserIsLoggedIn();
     }
+    public interface DisplayAddProfilePictureFragmentListener {
+        void displayAddProfilePictureFragment();
+    }
 
     private static FirebaseUser user;
 
+    DisplayAddProfilePictureFragmentListener displayAddProfilePictureFragmentListener;
     CheckWhetherAUserIsLoggedInListener checkWhetherAUserIsLoggedInListener;
     GetFirebaseAuthListener getFirebaseAuthListener;
     GetUserAuthActivityContextListener getAuthActivityContext;
@@ -107,7 +112,7 @@ public class UserAuthUtility {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 setCurrentUser(user);
-                                checkWhetherAUserIsLoggedInListener.checkWhetherUserIsLoggedIn();
+                                displayAddProfilePictureFragmentListener.displayAddProfilePictureFragment();
                             }
                         });
 
@@ -141,5 +146,9 @@ public class UserAuthUtility {
                 user = null;
             }
         }
+    }
+
+    public void updateProfileImage() {
+
     }
 }

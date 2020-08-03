@@ -7,10 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.objects.User;
 import com.example.highstrangeness.ui.main.MainActivity;
+import com.example.highstrangeness.ui.user_auth.add_profile_picture.AddProfilePictureFragment;
 import com.example.highstrangeness.ui.user_auth.login.LoginFragment;
 import com.example.highstrangeness.ui.user_auth.reset_password.ResetPasswordActivity;
 import com.example.highstrangeness.ui.user_auth.sign_up.SignUpFragment;
@@ -23,12 +25,18 @@ public class UserAuthActivity extends AppCompatActivity implements UserAuthUtili
         LoginFragment.DisplaySignUpFragmentListener, SignUpFragment.SignUpListener,
         SignUpFragment.DisplayLoginFragmentListener,
         UserAuthUtility.CheckWhetherAUserIsLoggedInListener,
-        LoginFragment.NavigateToResetPasswordActivity {
+        LoginFragment.NavigateToResetPasswordActivity,
+        AddProfilePictureFragment.NavigateToMainScreenListener,
+        UserAuthUtility.DisplayAddProfilePictureFragmentListener {
 
     public static final String TAG = "UserAuthActivity";
     public static final int REQUEST_CODE_LOGGED_OUT = 0x068;
 
 
+    @Override
+    public void navigateToMainScreenListener() {
+        navigateToMainActivity();
+    }
 
     @Override
     public void checkWhetherUserIsLoggedIn() {
@@ -93,6 +101,11 @@ public class UserAuthActivity extends AppCompatActivity implements UserAuthUtili
             Log.d(TAG, "checkIfUserIsAlreadySignedIn: false");
             displayLogInFragment();
         }
+    }
+
+    public void displayAddProfilePictureFragment() {
+        Toast.makeText(this, "Account Created", Toast.LENGTH_SHORT).show();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutUserAuth, new AddProfilePictureFragment()).commit();
     }
 
     public void displayLogInFragment() {
