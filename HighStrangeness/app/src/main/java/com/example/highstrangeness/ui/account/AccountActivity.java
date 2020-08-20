@@ -19,6 +19,7 @@ import com.example.highstrangeness.ui.main.MainActivity;
 import com.example.highstrangeness.utilities.StorageUtility;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.IOException;
@@ -49,18 +50,24 @@ public class AccountActivity extends AppCompatActivity {
 
     private void updateViews()  {
         imageViewProfilePic = ((ImageView) findViewById(R.id.imageViewProfilePictureAccountScreen));
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            Log.d(TAG, "updateViews: username = " + user.getDisplayName());
+            Log.d(TAG, "updateViews: email = " + user.getEmail());
 
-        StorageUtility.getProfileImage(User.currentUser.getId(), 2, imageViewProfilePic, this);
-        ((TextView) findViewById(R.id.textViewUsernameAccountScreen)).setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-        ((TextView) findViewById(R.id.textViewEmailAccountScreen)).setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-        ((Button) findViewById(R.id.buttonLogOut)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "onClick: ");
-                setResult(MainActivity.REQUEST_CODE_ACCOUNT_SCREEN);
-                finish();
-            }
-        });
+
+            StorageUtility.getProfileImage(user.getUid(), 2, imageViewProfilePic, this);
+            ((TextView) findViewById(R.id.textViewUsernameAccountScreen)).setText(user.getDisplayName());
+            ((TextView) findViewById(R.id.textViewEmailAccountScreen)).setText(user.getEmail());
+            ((Button) findViewById(R.id.buttonLogOut)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(TAG, "onClick: ");
+                    setResult(MainActivity.REQUEST_CODE_ACCOUNT_SCREEN);
+                    finish();
+                }
+            });
+        }
     }
 
     @Override

@@ -141,9 +141,4 @@ public class UserAuthUtility {
             }
         }
     }
-
-    public static void updateProfile(String email, String username, Context context) {
-        //set email
-
-    }
 }

@@ -9,7 +9,9 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,6 +84,38 @@ public class LoginFragment extends Fragment {
             editTextPassword =  (EditText) getActivity().findViewById(R.id.editTextTextPasswordLogIn);
             loginResponseReceiver = new LoginFragment.LoginResponseReceiver();
             getActivity().registerReceiver(loginResponseReceiver, new IntentFilter(INTENT_FILTER));
+
+            editTextEmail.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    FormValidationUtility.validateEmail(charSequence.toString(), editTextEmail);
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                }
+            });
+
+            editTextPassword.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    FormValidationUtility.validatePassword(charSequence.toString(), editTextPassword);
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
 
             //Login Button Tapped
             getActivity().findViewById(R.id.buttonLogInLogIn).setOnClickListener(new View.OnClickListener() {

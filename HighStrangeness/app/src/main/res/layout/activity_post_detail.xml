@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.post_detail.PostDetailActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/buttonReportPostDetail"
+                android:text="@string/report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <ImageButton
+                android:id="@+id/buttonUserPostDetail"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/buttonReportPostDetail"
+                android:contentDescription="@string/content_description_user_image" />
+
+            <TextView
+                android:id="@+id/textViewUserNamePostDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="16dp"
+                app:layout_constraintTop_toTopOf="@id/buttonUserPostDetail"
+                app:layout_constraintStart_toEndOf="@id/buttonUserPostDetail"/>
+
+            <TextView
+                android:id="@+id/textViewDatePostDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="4dp"
+                app:layout_constraintStart_toEndOf="@id/textViewUserNamePostDetail"
+                app:layout_constraintTop_toTopOf="@id/textViewUserNamePostDetail"/>
+
+            <TextView
+                android:id="@+id/textViewTitlePostDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="24dp"
+                app:layout_constraintStart_toStartOf="@id/textViewUserNamePostDetail"
+                app:layout_constraintTop_toBottomOf="@id/textViewUserNamePostDetail"/>
+
+            <TextView
+                android:id="@+id/textViewTagsPostDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="32dp"
+                app:layout_constraintStart_toStartOf="@id/buttonUserPostDetail"
+                app:layout_constraintTop_toBottomOf="@id/textViewTitlePostDetail"/>
+
+            <ImageView
+                android:id="@+id/imageViewLocationIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewTagsPostDetail"/>
+
+            <TextView
+                android:id="@+id/textViewLocationPostDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintStart_toEndOf="@id/imageViewLocationIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/imageViewLocationIcon"
+                app:layout_constraintBottom_toBottomOf="@id/imageViewLocationIcon"/>
+
+            <TextView
+                android:id="@+id/textViewDescriptionPostDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="32dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
+                app:layout_constraintStart_toStartOf="@id/buttonUserPostDetail"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewLocationPostDetail"/>
+
+            <View
+                android:id="@+id/dividerImageAudio"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+
+                app:layout_constraintTop_toBottomOf="@id/textViewDescriptionPostDetail"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/textViewPhotosPostDetail"
+                android:text="@string/images"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="32dp"
+                app:layout_constraintTop_toBottomOf="@id/dividerImageAudio"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewImagesPostDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="24dp"
+                app:layout_constraintTop_toBottomOf="@id/textViewPhotosPostDetail"/>
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

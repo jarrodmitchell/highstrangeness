@@ -31,4 +31,27 @@
     <string name="email">Email</string>
     <string name="save_changes">Save Changes</string>
     <string name="faux_password">00000000</string>
+    <string name="username">Username</string>
+    <string name="details">Details</string>
+    <string name="location">Location (Required)</string>
+    <string name="description">Description (Required)</string>
+    <string name="title">Title (Required)</string>
+    <string name="date">Date (Required)</string>
+    <string name="pick_date">Pick Date</string>
+    <string name="pick_location">Pick Location</string>
+    <string name="next">Next</string>
+    <string name="tags_optional">Tags (Optional)</string>
+    <string name="tag_hint">(Tags should be separated by commas)</string>
+    <string name="image_s">Image(s) (Optional)</string>
+    <string name="add_image">Add Image</string>
+    <string name="video_s_optional">Video(s) (Optional)</string>
+    <string name="add_video">Add Video</string>
+    <string name="no_results">No Results</string>
+    <string name="add_post">Add Post</string>
+    <string name="ex_ghost_supernatural_spirit">Ex: Ghost,Supernatural,Spirit</string>
+    <string name="add_audio">Add Audio</string>
+    <string name="mm_dd_yyyy">(MM/dd/yyyy)</string>
+    <string name="address">Address</string>
+    <string name="report">Report</string>
+    <string name="images">Images</string>
 </resources>

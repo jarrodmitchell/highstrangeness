@@ -7,41 +7,72 @@
     android:layout_marginTop="36dp"
     tools:context=".ui.account.edit_account.EditAccountActivity">
 
-    <ImageView
-        android:id="@+id/imageViewProfilePictureEditAccountScreen"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:contentDescription="@string/content_description_user_image"
-        android:src="@drawable/user"
+    <com.google.android.material.circularreveal.cardview.CircularRevealCardView
+        android:id="@+id/cardViewProfilePictureEditAccountScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="50dp"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageViewProfilePictureEditAccountScreen"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:contentDescription="@string/content_description_user_image"
+            android:src="@drawable/user"
+            android:scaleType="centerCrop"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonEditProfilePic"
         style="@style/BorderlessButton"
         android:text="@string/edit"
 
-        app:layout_constraintTop_toBottomOf="@id/imageViewProfilePictureEditAccountScreen"
+        app:layout_constraintTop_toBottomOf="@id/cardViewProfilePictureEditAccountScreen"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <EditText
-        android:id="@+id/editTextEditEmail"
-        style="@style/EditTextCustom"
-        android:layout_marginTop="60dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonEditProfilePic"/>
-
-    <EditText
         android:id="@+id/editTextEditUsername"
         style="@style/EditTextCustom"
+        android:hint="@string/username"
+
         android:layout_marginTop="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextEditEmail"/>
+        app:layout_constraintTop_toBottomOf="@id/buttonEditProfilePic"
+        android:autofillHints="Username"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/editTextEditEmail"
+        style="@style/EditTextCustom"
+        android:enabled="false"
+        android:hint="@string/email"
+
+        android:layout_marginTop="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextEditUsername"
+        android:autofillHints="@string/email"
+        android:inputType="textEmailAddress" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonEditEmail"
+        style="@style/BorderlessButton"
+        android:text="@string/edit"
+        android:elevation="4dp"
+
+        app:layout_constraintBottom_toBottomOf="@id/editTextEditEmail"
+        app:layout_constraintEnd_toEndOf="@id/editTextEditEmail"/>
 
     <EditText
         android:id="@+id/editTextPassword"
@@ -49,11 +80,13 @@
         android:inputType="textPassword"
         android:text="@string/faux_password"
         android:enabled="false"
+        android:hint="@string/password"
 
         android:layout_marginTop="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextEditUsername"/>
+        app:layout_constraintTop_toBottomOf="@id/editTextEditEmail"
+        android:autofillHints="@string/password" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonEditPassword"

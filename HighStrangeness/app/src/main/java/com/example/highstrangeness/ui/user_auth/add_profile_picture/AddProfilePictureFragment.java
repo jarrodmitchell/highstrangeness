@@ -11,9 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.utilities.StorageUtility;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 
 import static android.app.Activity.RESULT_OK;
@@ -27,6 +30,8 @@ public class AddProfilePictureFragment extends Fragment {
 
     public static final String TAG = "AddProfilePictureFrag";
     public static final int REQUEST_CODE_FILE_PICKER = 0x073;
+
+    ImageView imageViewProfilePic;
 
     public interface NavigateToMainScreenListener {
         void navigateToMainScreen();
@@ -65,6 +70,8 @@ public class AddProfilePictureFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
+            imageViewProfilePic = (ImageView) getActivity().findViewById(R.id.imageViewProfilePictureAccountScreen);
+
             //From file button tapped
             getActivity().findViewById(R.id.buttonFromFileAddProfilePicScreen).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -90,10 +97,10 @@ public class AddProfilePictureFragment extends Fragment {
 
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_FILE_PICKER && data != null) {
 
-
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             Uri image = data.getData();
-            if (image != null) {
-                boolean success = StorageUtility.updateProfileImage(image, getContext());
+            if (image != null && user != null) {
+                boolean success = StorageUtility.updateProfileImage(image, getContext(), imageViewProfilePic, 2);
                 if (success) {
                     navigateToMainScreenListener.navigateToMainScreen();
                 }

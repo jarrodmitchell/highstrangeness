@@ -5,6 +5,54 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="titleTextColor">@color/colorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/colorPrimaryDark</item>
+        <item name="drawableTint">@color/colorPrimaryDark</item>
+        <item name="itemIconTint">@color/colorPrimaryDark</item>
+        <item name="rippleColor">@color/pink</item>
+        <item name="android:actionButtonStyle">@style/ButtonBlue</item>
+        <item name="android:buttonStyleInset">@style/ButtonBlue</item>
+    </style>
+
+    <style name="FABStyle" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="tint">@color/green</item>
+    </style>
+
+    <style name="ButtonBlue" parent="TextAppearance.MaterialComponents.Button">
+        <item name="colorAccent">@color/pink</item>
+        <item name="backgroundColor">@color/pink</item>
+        <item name="background">@color/colorPrimaryDark</item>
+        <item name="tint">@color/pink</item>
+        <item name="buttonTint">@color/pink</item>
+        <item name="android:buttonTint">@color/pink</item>
+        <item name="android:backgroundTint">@color/pink</item>
+        <item name="android:textColor">@color/pink</item>
+        <item name="android:textColorSecondary">@color/pink</item>
+        <item name="android:textColorTertiary">@color/pink</item>
+        <item name="android:textColorPrimary">@color/pink</item>
+        <item name="titleTextColor">@color/pink</item>
+        <item name="colorButtonNormal">@color/pink</item>
+        <item name="colorSurface">@color/pink</item>
+    </style>
+
+    <style name="ButtonColor" parent="Widget.AppCompat.Light.ActionButton">
+        <item name="itemTextColor">@color/pink</item>
+        <item name="buttonTint">@color/pink</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="buttonTint">@color/pink</item>
+
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/pink</item>
     </style>
     
     <style name="AppTheme.NoActionBar">
@@ -67,6 +115,25 @@
         <item name="fontFamily">@font/heebo_bold</item>
         <item name="android:layout_marginStart">24dp</item>
         <item name="android:layout_marginEnd">24dp</item>
+        <item name="colorAccent">@color/design_default_color_primary_dark</item>
+    </style>
+
+    <style name="EditTextAddPost" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/colorPrimaryDark</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="boxStrokeColor">@color/colorPrimaryDark</item>
+        <item name="android:inputType">textMultiLine</item>
+    </style>
+
+    <style name="TextViewTitleEncounter" >
+        <item name="fontFamily">@font/heebo_medium</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="TextViewTitleEncounter.Light">
+        <item name="fontFamily">@font/heebo_light</item>
     </style>
 
 </resources>
