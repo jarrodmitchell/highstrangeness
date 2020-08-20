@@ -33,6 +33,10 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EditAccountActivity extends AppCompatActivity {
 
@@ -109,9 +113,9 @@ public class EditAccountActivity extends AppCompatActivity {
         buttonSaveChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = editTextUsername.getText().toString();
+                final String username = editTextUsername.getText().toString();
 
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
 
                     if (!username.equals(user.getDisplayName())) {
@@ -122,6 +126,11 @@ public class EditAccountActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 Log.d(TAG, "Username updated");
                                 displayResults("Username Updated");
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                Map<String, Object> docData = new HashMap<>();
+                                docData.put("username", username);
+                                db.collection("user").document(user.getUid()).set(docData);
+                                buttonSaveChanges.setVisibility(View.GONE);
                             }
                         });
                     }

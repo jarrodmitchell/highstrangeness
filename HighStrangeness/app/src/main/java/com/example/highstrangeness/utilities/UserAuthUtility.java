@@ -20,6 +20,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserAuthUtility {
     public static final String TAG = "UserAuthUtility";
@@ -102,14 +107,21 @@ public class UserAuthUtility {
 
                         //set username
                         UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(username).build();
-                        user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                setCurrentUser(user);
-                                displayAddProfilePictureFragmentListener.displayAddProfilePictureFragment();
-                            }
-                        });
 
+                        if (user != null) {
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            Map<String, Object> docData = new HashMap<>();
+                            docData.put("username", username);
+                            db.collection("user").document(user.getUid()).set(docData);
+
+                            user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    setCurrentUser(user);
+                                    displayAddProfilePictureFragmentListener.displayAddProfilePictureFragment();
+                                }
+                            });
+                        }
                     }
                 })
                 .addOnFailureListener((Activity) getAuthActivityContext.getContext(), new OnFailureListener() {

@@ -16,8 +16,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.objects.Post;
 import com.example.highstrangeness.ui.main.list.ListFragment;
+import com.example.highstrangeness.utilities.StorageUtility;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
@@ -75,10 +85,31 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final PostViewHolder holder, int position) {
         if (posts.size() > position) {
-            holder.textViewTitle.setText(posts.get(position).getTitle());
-            holder.textViewDescription.setText(posts.get(position).getDescription());
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(posts.get(position).getUsername());
+            stringBuilder.append(" ·");
+            String username = stringBuilder.toString();
+            String date = DateFormat.getDateInstance().format(posts.get(position).getDate());
+            String title = posts.get(position).getTitle();
+            stringBuilder = new StringBuilder();
+
+            ArrayList<String> tags = posts.get(position).getTags();
+            for (int i = 0; i < tags.size(); i ++) {
+                stringBuilder.append(tags.get(i));
+                if (i != tags.size() - 1) {
+                    stringBuilder.append(", ");
+                }
+            }
+            String tagsString = stringBuilder.toString();
+            String description = posts.get(position).getDescription();
+
+            holder.textViewUsername.setText(username);
+            holder.textViewDate.setText(date);
+            holder.textViewTitle.setText(title);
+            holder.textViewTags.setText(tagsString);
+            holder.textViewDescription.setText(description);
         }
     }
 

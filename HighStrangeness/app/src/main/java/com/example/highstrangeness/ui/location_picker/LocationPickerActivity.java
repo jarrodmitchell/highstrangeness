@@ -28,27 +28,38 @@ public class LocationPickerActivity extends AppCompatActivity implements Locatio
     @Override
     public void returnAddress(final Address address) {
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Save Location");
-        alertDialog.setMessage(address.getAddressLine(0));
-        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", (Message) null);
-        Log.d(TAG, "onPostExecute: ");
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Save", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Intent resultIntent = getIntent();
-                resultIntent.putExtra(NewPostActivity.EXTRA_ADDRESS_RETURN, new double[]{address.getLatitude(), address.getLongitude()});
-                setResult(Activity.RESULT_OK, resultIntent);
-                Log.d(TAG, "onClick: finish");
-                finish();
-            }
-        });
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.pink));
-                alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
-            }
-        });
+        if (address != null) {
+            alertDialog.setTitle("Save Location");
+            alertDialog.setMessage(address.getAddressLine(0));
+            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", (Message) null);
+            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Save", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent resultIntent = getIntent();
+                    resultIntent.putExtra(NewPostActivity.EXTRA_ADDRESS_RETURN, new double[]{address.getLatitude(), address.getLongitude()});
+                    setResult(Activity.RESULT_OK, resultIntent);
+                    Log.d(TAG, "onClick: finish");
+                    finish();
+                }
+            });
+            alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialogInterface) {
+                    alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.pink));
+                    alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
+                }
+            });
+        }else {
+            alertDialog.setTitle("Invalid address");
+            alertDialog.setMessage("Select a location on land");
+            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Ok", (Message) null);
+            alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialogInterface) {
+                    alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.pink));
+                }
+            });
+        }
         alertDialog.show();
     }
 

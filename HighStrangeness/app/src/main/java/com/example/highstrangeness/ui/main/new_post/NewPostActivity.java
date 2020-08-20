@@ -22,6 +22,7 @@ import com.example.highstrangeness.R;
 import com.example.highstrangeness.dialogs.DatePickerFragment;
 import com.example.highstrangeness.objects.NewPost;
 import com.example.highstrangeness.ui.location_picker.LocationPickerActivity;
+import com.example.highstrangeness.ui.main.MainActivity;
 import com.example.highstrangeness.ui.post.PostPt1Fragment;
 import com.example.highstrangeness.ui.post.PostPt2Fragment;
 import com.example.highstrangeness.utilities.LocationUtility;
@@ -45,11 +46,8 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
     public static final String ACTION_SEND_ADD_POST_RESULT = "ACTION_SEND_ADD_POST_RESULT";
     public static final int REQUEST_CODE_ADDRESS = 0x89;
 
-    EditText editTextTitle;
-    SwitchMaterial switchFirstHand;
     TextView textViewDate;
     TextView textViewLocation;
-    EditText editTextDescription;
     NewPost newPost;
     Date date;
     double latitude;
@@ -64,7 +62,6 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
             PostUtility.addPost(newPost.getTitle(), newPost.isFirstHand(), newPost.getDate(),
                     newPost.getLatitude(), newPost.getLongitude(), newPost.getDescription(), tags, imageUris,
                     audioUris, videoUris, this);
-
         }
     }
 
@@ -75,6 +72,7 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
                 boolean success = intent.getBooleanExtra("success", false);
                 if (success) {
                     Log.d(TAG, "onReceive: ");
+                    unregisterReceiver(addPostResultReceiver);
                     finish();
                 }
             }

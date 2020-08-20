@@ -26,6 +26,10 @@
                 android:id="@+id/buttonUserPostDetail"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
+                android:src="@drawable/ar_camera"
+                android:scaleType="centerCrop"
+                android:background="@android:color/transparent"
+                android:elevation="5dp"
 
                 android:layout_marginTop="24dp"
                 android:layout_marginStart="24dp"
@@ -80,8 +84,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textViewTagsPostDetail"/>
 
-            <TextView
-                android:id="@+id/textViewLocationPostDetail"
+            <Button
+                android:id="@+id/buttonLocationPostDetail"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
 
@@ -103,7 +107,7 @@
                 android:layout_marginBottom="24dp"
                 app:layout_constraintStart_toStartOf="@id/buttonUserPostDetail"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textViewLocationPostDetail"/>
+                app:layout_constraintTop_toBottomOf="@id/buttonLocationPostDetail"/>
 
             <View
                 android:id="@+id/dividerImageAudio"
@@ -131,6 +135,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewImagesPostDetail"
+                android:scrollbars="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 

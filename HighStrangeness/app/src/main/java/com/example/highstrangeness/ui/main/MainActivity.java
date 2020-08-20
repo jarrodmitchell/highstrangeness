@@ -44,13 +44,14 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
         ListFragment.GetPostsListener, ListFragment.OnItemClickListener {
     
     public static final String TAG = "MainActivity";
-    public static final String EXTRA_POST_ID = "EXTRA_POST_ID";
+    public static final String EXTRA_POST = "EXTRA_POST";
+    public static final String ACTION_LIST_UPDATED = "ACTION_LIST_UPDATED";
     public static final int REQUEST_CODE_ACCOUNT_SCREEN = 0x034;
 
     @Override
     public void onClick(int position) {
         Intent intent = new Intent(MainActivity.this, PostDetailActivity.class);
-        intent.putExtra(EXTRA_POST_ID, postList.get(position).getId());
+        intent.putExtra(EXTRA_POST, postList.get(position));
         startActivity(intent);
     }
 
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
     public void setPostListener(List<Post> posts) {
         postList = posts;
         Log.d(TAG, "onCreate: " + postList.size());
+        Intent intent = new Intent(ACTION_LIST_UPDATED);
+        sendBroadcast(intent);
     }
 
     FloatingActionButton fab;
@@ -72,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        PostUtility.getAllPosts(this);
 
         setTitle("");
 
@@ -105,6 +107,17 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
             }
         });
         NavigationUI.setupWithNavController(navView, navController);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        PostUtility.getAllPosts(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
