@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,7 +42,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaAdapter
     @Override
     public void onBindViewHolder(@NonNull MediaAdapterHolder holder, int position) {
         if (postImageNames.size() > 0) {
-            StorageUtility.setPostImageToImageButton(postImageNames.get(position), id, 1, holder.imageButton, context);
+            StorageUtility.setPostImage(postImageNames.get(position), id, 2, holder.imageView);
         }
     }
 
@@ -51,11 +52,11 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaAdapter
     }
 
     public static class MediaAdapterHolder extends RecyclerView.ViewHolder {
-        ImageButton imageButton;
+        ImageView imageView;
 
         public MediaAdapterHolder(@NonNull View itemView) {
             super(itemView);
-            imageButton = (ImageButton) itemView.findViewById(R.id.buttonMediaThumb);
+            imageView = itemView.findViewById(R.id.imageViewMediaThumb);
         }
     }
 }

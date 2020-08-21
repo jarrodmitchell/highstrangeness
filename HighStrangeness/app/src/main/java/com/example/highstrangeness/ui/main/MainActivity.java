@@ -1,34 +1,24 @@
 package com.example.highstrangeness.ui.main;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SearchEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.fragment.app.Fragment;
 
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.objects.Post;
 import com.example.highstrangeness.objects.User;
 import com.example.highstrangeness.ui.account.AccountActivity;
 import com.example.highstrangeness.ui.main.list.ListFragment;
+import com.example.highstrangeness.ui.main.map.MapFragment;
+import com.example.highstrangeness.ui.main.media_capture.MediaCaptureFragment;
 import com.example.highstrangeness.ui.main.new_post.NewPostActivity;
 import com.example.highstrangeness.ui.post_detail.PostDetailActivity;
 import com.example.highstrangeness.ui.user_auth.UserAuthActivity;
@@ -37,6 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,14 +53,56 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
 
     @Override
     public void setPostListener(List<Post> posts) {
-        postList = posts;
-        Log.d(TAG, "onCreate: " + postList.size());
-        Intent intent = new Intent(ACTION_LIST_UPDATED);
-        sendBroadcast(intent);
+        boolean shouldUpdateList = shouldUpdateList(postList, posts);
+        if (shouldUpdateList) {
+            postList = posts;
+            Intent intent = new Intent(ACTION_LIST_UPDATED);
+            Log.d(TAG, "setPostListener: send");
+            sendBroadcast(intent);
+        }
     }
 
+    private boolean shouldUpdateList(List<Post> postList1, List<Post> postList2) {
+        boolean bool = false;
+
+        //if current list is empty, update it to the new list
+        if (postList1.size() == 0 && postList2.size() > postList1.size()) {
+            return true;
+        }
+
+        int max = postList2.size();
+
+        if (postList1.size() > postList2.size()) {
+            max = postList1.size();
+        }
+
+        //check whether all values in each list are the same
+        for (int i = 0; i < postList1.size() && i < postList2.size(); i++) {
+            //if they are, don't update the list
+            if (postList1.get(i).getId().equals(postList2.get(i).getId()) && i == max-1) {
+                return false;
+            }else if(!postList1.get(i).getId().equals(postList2.get(i).getId())) {
+                return true;
+            }
+            //if they aren't, update the list
+            bool = true;
+        }
+        return bool;
+    }
+
+    public void s(List<Post> p, String name) {
+        for (Post post: p) {
+            Log.d(TAG, "s: post " + name + post.getTitle());
+        }
+    }
+
+
     FloatingActionButton fab;
-    List<Post> postList;
+    List<Post> postList = new ArrayList<>();
+    final Fragment listFragment = new ListFragment();
+    final Fragment mapFragment = new MapFragment();
+    final Fragment mediaCaptureFragment = new MediaCaptureFragment();
+    BottomNavigationView navView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,37 +120,42 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
             }
         });
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.navigation_map);
-        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+        navView = findViewById(R.id.nav_view);
+        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-                switch (destination.getId()) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
                     case R.id.navigation_media_capture:
-                        fab.setVisibility(View.GONE);
+                        getSupportActionBar().setShowHideAnimationEnabled(false);
                         Objects.requireNonNull(getSupportActionBar()).hide();
-                        break;
+                        displayFragment(mediaCaptureFragment);
+                        return true;
                     case R.id.navigation_map:
-                    case R.id.navigation_list:
-                        fab.setVisibility(View.VISIBLE);
+                        getSupportActionBar().setShowHideAnimationEnabled(false);
                         Objects.requireNonNull(getSupportActionBar()).show();
-                        break;
+                        displayFragment(mapFragment);
+                        return true;
+                    case R.id.navigation_list:
+                        getSupportActionBar().setShowHideAnimationEnabled(false);
+                        Objects.requireNonNull(getSupportActionBar()).show();
+                        displayFragment(listFragment);
+                        return true;
                 }
+                return false;
             }
         });
-        NavigationUI.setupWithNavController(navView, navController);
+        Log.d(TAG, "onCreate: set selected");
+        navView.setSelectedItemId(R.id.navigation_map);
+    }
+
+    private void displayFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout_nav, fragment).commit();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         PostUtility.getAllPosts(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override
@@ -152,5 +190,12 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
             setResult(UserAuthActivity.REQUEST_CODE_LOGGED_OUT);
             finish();
         }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        finish();
+        moveTaskToBack(true);
     }
 }

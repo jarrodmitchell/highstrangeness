@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.adapters.MediaAdapter;
@@ -29,9 +32,18 @@ import com.example.highstrangeness.utilities.PostUtility;
 import java.util.List;
 import java.util.Objects;
 
-public class ListFragment extends Fragment {
+public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     public static final String TAG = "ListFragment";
+    private static final String LIST_STATE = "LIST_STATE";
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        setRecycleView();
+        buttonNewPosts.setVisibility(View.GONE);
+        swipeRefreshLayout.setRefreshing(false);
+    }
 
     public interface GetPostsListener {
         List<Post> getPosts();
@@ -41,11 +53,17 @@ public class ListFragment extends Fragment {
         void onClick(int position);
     }
 
+
     GetPostsListener getPostsListener;
     OnItemClickListener onItemClickListener;
+    SwipeRefreshLayout swipeRefreshLayout;
     UpdatedListReceiver updatedListReceiver;
     RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
+    Button buttonNewPosts;
     Context context;
+    Parcelable listState = null;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -58,13 +76,23 @@ public class ListFragment extends Fragment {
         if (getActivity() != null) {
             context = getActivity();
             updatedListReceiver = new UpdatedListReceiver();
-            context.registerReceiver(updatedListReceiver, new IntentFilter(MainActivity.ACTION_LIST_UPDATED));
             getPostsListener = (GetPostsListener) getActivity();
             onItemClickListener = (OnItemClickListener) getActivity();
+            buttonNewPosts = getActivity().findViewById(R.id.buttonNewPostsMain);
+            buttonNewPosts.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    setRecycleView();
+                    buttonNewPosts.setVisibility(View.GONE);
+                }
+            });
             recyclerView = getActivity().findViewById(R.id.recyclerViewPostsMain);
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+            layoutManager = new LinearLayoutManager(getContext());
             recyclerView.setLayoutManager(layoutManager);
             setRecycleView();
+            swipeRefreshLayout = getActivity().findViewById(R.id.swipeRefreshPostsMain);
+            swipeRefreshLayout.setOnRefreshListener(this);
+            swipeRefreshLayout.setColorSchemeResources(R.color.green, R.color.pink, R.color.purple, R.color.colorPrimaryDark);
         }
     }
 
@@ -89,12 +117,27 @@ public class ListFragment extends Fragment {
         context.unregisterReceiver(updatedListReceiver);
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        listState = layoutManager.onSaveInstanceState();
+        outState.putParcelable(LIST_STATE, listState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LIST_STATE));
+        }
+    }
+
     public class UpdatedListReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() != null && intent.getAction().equals(MainActivity.ACTION_LIST_UPDATED)) {
                 Log.d(TAG, "onReceive: update");
-                setRecycleView();
+                buttonNewPosts.setVisibility(View.VISIBLE);
             }
         }
     }

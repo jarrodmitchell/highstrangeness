@@ -1,13 +1,13 @@
 package com.example.highstrangeness.adapters;
 
 import android.content.Context;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,17 +17,9 @@ import com.example.highstrangeness.R;
 import com.example.highstrangeness.objects.Post;
 import com.example.highstrangeness.ui.main.list.ListFragment;
 import com.example.highstrangeness.utilities.StorageUtility;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
@@ -49,24 +41,26 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
 
     public static class PostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public ImageButton buttonUser;
+        public ImageView imageViewUserPic;
         public TextView textViewUsername;
         public TextView textViewDate;
         public TextView textViewTitle;
         public TextView textViewTags;
         public TextView textViewDescription;
         public TextView textViewContentTypes;
+        public TextView textViewFirstHand;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            buttonUser = itemView.findViewById(R.id.buttonUserPost);
+            imageViewUserPic = itemView.findViewById(R.id.imageViewUserPost);
             textViewUsername = itemView.findViewById(R.id.textViewUserNamePost);
             textViewDate = itemView.findViewById(R.id.textViewDatePost);
             textViewTitle = itemView.findViewById(R.id.textViewTitlePost);
             textViewTags = itemView.findViewById(R.id.textViewTagsPost);
             textViewDescription = itemView.findViewById(R.id.textViewDescriptionPost);
             textViewContentTypes = itemView.findViewById(R.id.textViewContentTypes);
+            textViewFirstHand = itemView.findViewById(R.id.textViewFirstHandPost);
         }
 
         @Override
@@ -87,7 +81,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @Override
     public void onBindViewHolder(@NonNull final PostViewHolder holder, int position) {
         if (posts.size() > position) {
+            StorageUtility.setProfileImage(posts.get(position).getUserId(), 0, holder.imageViewUserPic);
+
             StringBuilder stringBuilder = new StringBuilder();
+            Log.d(TAG, "onBindViewHolder: username" + posts.get(position).getUsername());
+            Log.d(TAG, "onBindViewHolder: username" + posts.get(position).getUserId());
             stringBuilder.append(posts.get(position).getUsername());
             stringBuilder.append(" ·");
             String username = stringBuilder.toString();
@@ -103,18 +101,54 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 }
             }
             String tagsString = stringBuilder.toString();
+            SpannableString spannableString = new SpannableString(tagsString);
+            spannableString.setSpan(new UnderlineSpan(), 0, tagsString.length(), 0);
             String description = posts.get(position).getDescription();
+
+            ArrayList<String> contentTypesList = posts.get(position).getContentTypes();
+            stringBuilder = new StringBuilder();
+
+            for (int i = 0; i < contentTypesList.size(); i ++) {
+                stringBuilder.append(contentTypesList.get(i));
+                if (i != contentTypesList.size() - 1) {
+                    stringBuilder.append(" · ");
+                }
+            }
+            String contentTypes = stringBuilder.toString();
+            boolean firstHand = posts.get(position).isFirstHand();
 
             holder.textViewUsername.setText(username);
             holder.textViewDate.setText(date);
+
             holder.textViewTitle.setText(title);
-            holder.textViewTags.setText(tagsString);
+            if (!spannableString.toString().isEmpty()) {
+                holder.textViewTags.setVisibility(View.VISIBLE);
+                holder.textViewTags.setText(spannableString);
+            }else {
+                holder.textViewTags.setVisibility(View.GONE);
+            }
+
             holder.textViewDescription.setText(description);
+            if (!contentTypes.trim().isEmpty()) {
+                holder.textViewContentTypes.setVisibility(View.VISIBLE);
+                holder.textViewContentTypes.setText(contentTypes);
+            }else {
+                holder.textViewContentTypes.setVisibility(View.GONE);
+            }
+
+            if(firstHand) {
+                holder.textViewFirstHand.setVisibility(View.VISIBLE);
+            }else {
+                holder.textViewFirstHand.setVisibility(View.GONE);
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        return posts.size();
+        if (posts != null) {
+            return posts.size();
+        }
+        return 0;
     }
 }

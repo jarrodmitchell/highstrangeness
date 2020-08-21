@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingStart="16dp"
+    android:paddingBottom="16dp"
     android:paddingEnd="4dp">
 
-    <ImageButton
-        android:id="@+id/buttonMediaThumb"
-        android:layout_width="120dp"
-        android:layout_height="96dp"/>
+    <com.google.android.material.circularreveal.cardview.CircularRevealCardView
+        android:id="@+id/cardViewProfilePicturePostDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="14dp"
+        android:padding="8dp"
 
-</RelativeLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/imageViewMediaThumb"
+            android:src="@drawable/user"
+            android:scaleType="centerCrop"
+            android:layout_width="120dp"
+            android:layout_height="112dp"
+            android:contentDescription="@string/images" />
+    </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
+
+</LinearLayout>

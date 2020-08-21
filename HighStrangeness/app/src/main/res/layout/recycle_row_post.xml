@@ -2,33 +2,49 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageButton
-        android:id="@+id/buttonUserPost"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+    <com.google.android.material.circularreveal.cardview.CircularRevealCardView
+        android:id="@+id/cardViewProfilePicturePostDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="50dp"
 
         android:layout_marginTop="24dp"
         android:layout_marginStart="24dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/content_description_user_image" />
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/imageViewUserPost"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            android:contentDescription="@string/content_description_user_image" />
+
+    </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
     
     <TextView
         android:id="@+id/textViewUserNamePost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/TextViewTitleEncounter"
+        android:textColor="@color/colorPrimaryDark"
 
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/buttonUserPost"/>
+        app:layout_constraintStart_toEndOf="@id/cardViewProfilePicturePostDetail"/>
 
     <TextView
         android:id="@+id/textViewDatePost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/TextViewTitleEncounter.Light"
+        android:textColor="@color/colorPrimaryDark"
 
         android:layout_marginStart="4dp"
         app:layout_constraintStart_toEndOf="@id/textViewUserNamePost"
@@ -38,44 +54,80 @@
         android:id="@+id/textViewTitlePost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/TitleBase.Black"
+        android:textSize="18sp"
 
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="@id/textViewUserNamePost"
         app:layout_constraintTop_toBottomOf="@id/textViewUserNamePost"/>
 
     <TextView
         android:id="@+id/textViewTagsPost"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        style="@style/TextViewTags"
 
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@id/buttonUserPost"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintStart_toEndOf="@id/cardViewProfilePicturePostDetail"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewTitlePost"/>
+
+    <TextView
+        android:id="@+id/textViewFirstHandPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/first_hand_experience"
+        android:textAllCaps="true"
+        android:textSize="14sp"
+        style="@style/TextViewTitleEncounter"
+        android:textColor="@color/colorPrimaryDark"
+
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/textViewTagsPost"
+        app:layout_constraintStart_toStartOf="@id/cardViewProfilePicturePostDetail"/>
 
     <TextView
         android:id="@+id/textViewDescriptionPost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/TextViewTitleEncounter.Light"
+        android:textColor="@color/black"
+        android:maxLines="3"
+        android:minLines="1"
 
         android:layout_marginTop="8dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        app:layout_constraintStart_toStartOf="@id/buttonUserPost"
+        app:layout_constraintStart_toStartOf="@id/cardViewProfilePicturePostDetail"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewTagsPost"/>
+        app:layout_constraintTop_toBottomOf="@id/textViewFirstHandPost"/>
 
     <TextView
         android:id="@+id/textViewContentTypes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:maxLines="3"
+        style="@style/TextViewContentType"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
 
         android:layout_marginTop="8dp"
-        android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        app:layout_constraintStart_toStartOf="@id/buttonUserPost"
+        app:layout_constraintStart_toStartOf="@id/cardViewProfilePicturePostDetail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewDescriptionPost"/>
+
+    <View
+        android:id="@+id/dividerAudioVideo"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+
+        app:layout_constraintTop_toBottomOf="@id/textViewContentTypes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
     
     
 

@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -68,7 +67,7 @@ public class EditAccountActivity extends AppCompatActivity {
         buttonEditEmail = findViewById(R.id.buttonEditEmail);
         buttonEditPassword = findViewById(R.id.buttonEditPassword);
 
-        StorageUtility.getProfileImage(User.currentUser.getId(), 2, imageViewProfilePic, this);
+        StorageUtility.setProfileImage(User.currentUser.getId(), 2, imageViewProfilePic);
         if (user != null) {
             editTextEmail.setText(user.getEmail());
             editTextUsername.setText(user.getDisplayName());

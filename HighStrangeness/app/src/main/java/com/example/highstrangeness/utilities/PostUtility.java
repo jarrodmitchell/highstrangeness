@@ -22,15 +22,19 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firestore.v1.DocumentTransform;
 
+import org.w3c.dom.Document;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -129,14 +133,15 @@ public class PostUtility {
 
         final List<Post> posts = new ArrayList<>();
 
-        db.collection("posts").addSnapshotListener((Activity) context, new EventListener<QuerySnapshot>() {
+        db.collection("posts").orderBy(FIELD_POST_DATE, Query.Direction.DESCENDING).addSnapshotListener((Activity) context, new EventListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+            public void onEvent(@Nullable final QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (value != null) {
-                    for (DocumentSnapshot document: value.getDocuments()
-                         ) {
+                    for (int i = 0; i < value.getDocuments().size(); i++) {
+                        DocumentSnapshot document = value.getDocuments().get(i);
                         String id = document.getId();
                         String userId = (String) document.getData().get(FIELD_UID);
+                        Log.d(TAG, "onEvent: userId = " + userId);
                         String title = (String) document.getData().get(FIELD_TITLE);
                         Log.d(TAG, "onComplete: " + title);
                         boolean firstHand = (boolean) document.getData().get(FIELD_FIRST_HAND);
@@ -147,8 +152,10 @@ public class PostUtility {
                         double longitude = (double) document.getData().get(FIELD_LONGITUDE);
                         String description = (String) document.getData().get(FIELD_DESCRIPTION);
                         ArrayList<String> tags = (ArrayList<String>) document.getData().get(FIELD_TAGS);
+                        ArrayList<String> contentTypes = (ArrayList<String>) document.getData().get(FIELD_CONTENT_TYPES);
 
-                        final Post post = new Post(id, userId, title, firstHand, date, latitude, longitude, description, tags);
+                        final Post post = new Post(id, userId, title, firstHand, date, latitude, longitude, description, tags, contentTypes);
+                        final int index = i;
 
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                         db.collection("user").document(post.getUserId())
@@ -160,6 +167,10 @@ public class PostUtility {
                                             if (task.getResult() != null) {
                                                 String username = task.getResult().getString("username");
                                                 post.setUsername(username);
+                                                posts.add(post);
+                                                if (value.getDocuments().size() - 1 == index) {
+                                                    setPostListListener.setPostListener(posts);
+                                                }
                                             }
                                         } else {
                                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -167,22 +178,11 @@ public class PostUtility {
                                     }
                                 });
 
-                        posts.add(post);
                         Log.d(TAG, "onComplete: posts count: " + posts.size());
                     }
-                    setPostListListener.setPostListener(posts);
                 }
             }
         });
-
-//        db.collection("posts")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        parsePosts(context, task);
-//                    }
-//                });
     }
 
     private static void parsePosts(Context context, Task<QuerySnapshot> task) {
@@ -205,8 +205,9 @@ public class PostUtility {
                     double longitude = (double) document.getData().get(FIELD_LONGITUDE);
                     String description = (String) document.getData().get(FIELD_DESCRIPTION);
                     ArrayList<String> tags = (ArrayList<String>) document.getData().get(FIELD_TAGS);
+                    ArrayList<String> contentTypes = (ArrayList<String>) document.getData().get(FIELD_CONTENT_TYPES);
 
-                    final Post post = new Post(id, userId, title, firstHand, date, latitude, longitude, description, tags);
+                    final Post post = new Post(id, userId, title, firstHand, date, latitude, longitude, description, tags, contentTypes);
 
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     db.collection("user").document(post.getUserId())

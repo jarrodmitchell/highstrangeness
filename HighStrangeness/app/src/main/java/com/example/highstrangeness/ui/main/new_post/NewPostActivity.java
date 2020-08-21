@@ -72,7 +72,6 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
                 boolean success = intent.getBooleanExtra("success", false);
                 if (success) {
                     Log.d(TAG, "onReceive: ");
-                    unregisterReceiver(addPostResultReceiver);
                     finish();
                 }
             }

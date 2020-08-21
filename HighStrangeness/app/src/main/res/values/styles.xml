@@ -10,49 +10,17 @@
         <item name="drawableTint">@color/colorPrimaryDark</item>
         <item name="itemIconTint">@color/colorPrimaryDark</item>
         <item name="rippleColor">@color/pink</item>
-        <item name="android:actionButtonStyle">@style/ButtonBlue</item>
-        <item name="android:buttonStyleInset">@style/ButtonBlue</item>
+        <item name="android:actionButtonStyle">@style/ButtonPink</item>
+        <item name="android:buttonStyleInset">@style/ButtonPink</item>
     </style>
 
     <style name="FABStyle" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="tint">@color/green</item>
     </style>
 
-    <style name="ButtonBlue" parent="TextAppearance.MaterialComponents.Button">
-        <item name="colorAccent">@color/pink</item>
-        <item name="backgroundColor">@color/pink</item>
-        <item name="background">@color/colorPrimaryDark</item>
+    <style name="ButtonPink" parent="TextAppearance.MaterialComponents.Button">
         <item name="tint">@color/pink</item>
         <item name="buttonTint">@color/pink</item>
-        <item name="android:buttonTint">@color/pink</item>
-        <item name="android:backgroundTint">@color/pink</item>
-        <item name="android:textColor">@color/pink</item>
-        <item name="android:textColorSecondary">@color/pink</item>
-        <item name="android:textColorTertiary">@color/pink</item>
-        <item name="android:textColorPrimary">@color/pink</item>
-        <item name="titleTextColor">@color/pink</item>
-        <item name="colorButtonNormal">@color/pink</item>
-        <item name="colorSurface">@color/pink</item>
-    </style>
-
-    <style name="ButtonColor" parent="Widget.AppCompat.Light.ActionButton">
-        <item name="itemTextColor">@color/pink</item>
-        <item name="buttonTint">@color/pink</item>
-    </style>
-
-    <style name="AlertDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
-        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
-        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
-    </style>
-
-    <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:textColor">@color/colorPrimaryDark</item>
-        <item name="buttonTint">@color/pink</item>
-
-    </style>
-
-    <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:textColor">@color/pink</item>
     </style>
     
     <style name="AppTheme.NoActionBar">
@@ -100,8 +68,14 @@
         <item name="android:textColor">@color/pink</item>
     </style>
 
-    <style name="BorderlessButton" parent="Widget.AppCompat.Button.Borderless">
+    <style name="ButtonMinor" parent="TextAppearance.AppCompat.Widget.Button">
+        <item name="android:textColor">@color/pink</item>
+        <item name="android:backgroundTint">@color/white</item>
         <item name="fontFamily">@font/heebo_medium</item>
+    </style>
+
+    <style name="BorderlessButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="fontFamily">@font/heebo_bold</item>
         <item name="android:textSize">15sp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
@@ -134,6 +108,27 @@
 
     <style name="TextViewTitleEncounter.Light">
         <item name="fontFamily">@font/heebo_light</item>
+    </style>
+
+    <style name="TextViewTags">
+        <item name="fontFamily">@font/heebo_light</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/gray</item>
+    </style>
+
+    <style name="TextViewContentType" parent="TextViewTitleEncounter">
+        <item name="android:textColor">@color/purple</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="textAllCaps">true</item>
+    </style>
+
+    <style name="RefreshButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/button_shape_refresh</item>
+        <item name="android:textColor">@color/pink</item>
+        <item name="elevation">2dp</item>
     </style>
 
 </resources>

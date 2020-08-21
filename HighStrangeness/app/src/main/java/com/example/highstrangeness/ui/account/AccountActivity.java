@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,16 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.highstrangeness.R;
-import com.example.highstrangeness.objects.User;
 import com.example.highstrangeness.ui.account.edit_account.EditAccountActivity;
 import com.example.highstrangeness.ui.main.MainActivity;
 import com.example.highstrangeness.utilities.StorageUtility;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.FirebaseStorage;
-
-import java.io.IOException;
 
 public class AccountActivity extends AppCompatActivity {
     
@@ -56,7 +50,7 @@ public class AccountActivity extends AppCompatActivity {
             Log.d(TAG, "updateViews: email = " + user.getEmail());
 
 
-            StorageUtility.getProfileImage(user.getUid(), 2, imageViewProfilePic, this);
+            StorageUtility.setProfileImage(user.getUid(), 2, imageViewProfilePic);
             ((TextView) findViewById(R.id.textViewUsernameAccountScreen)).setText(user.getDisplayName());
             ((TextView) findViewById(R.id.textViewEmailAccountScreen)).setText(user.getEmail());
             ((Button) findViewById(R.id.buttonLogOut)).setOnClickListener(new View.OnClickListener() {

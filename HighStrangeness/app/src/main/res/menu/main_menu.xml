@@ -3,21 +3,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/app_bar_search"
+        android:enabled="true"
         android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/menu_search"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         android:tooltipText="Search Location"
         app:actionViewClass="android.widget.SearchView" />
 
     <item android:title="@string/menu_filter"
         android:id="@+id/app_bar_filter"
+        android:enabled="true"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/ic_baseline_filter_list_24"
-        android:iconTint="@color/colorPrimaryDark"
-        app:showAsAction="ifRoom"/>
+        android:iconTint="@color/colorPrimaryDark"/>
 
     <item android:title="@string/menu_account"
         android:id="@+id/app_bar_account"
+        android:enabled="true"
+        app:showAsAction="ifRoom"
         android:iconTint="@color/colorPrimaryDark"
-        android:icon="@drawable/ic_baseline_person_outline_24"
-        app:showAsAction="ifRoom"/>
+        android:icon="@drawable/ic_baseline_person_outline_24"/>
 </menu>

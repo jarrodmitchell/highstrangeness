@@ -62,6 +62,7 @@ public class Post implements Parcelable {
     private double longitude;
     private String description;
     private ArrayList<String> tags;
+    private ArrayList<String> contentTypes;
 
     public String getId() {
         return id;
@@ -107,7 +108,15 @@ public class Post implements Parcelable {
         this.username = username;
     }
 
-    public Post(String id, String userId, String title, boolean firstHand, Date date, double latitude, double longitude, String description, ArrayList<String> tags) {
+    public ArrayList<String> getContentTypes() {
+        return contentTypes;
+    }
+
+    public void setContentTypes(ArrayList<String> contentTypes) {
+        this.contentTypes = contentTypes;
+    }
+
+    public Post(String id, String userId, String title, boolean firstHand, Date date, double latitude, double longitude, String description, ArrayList<String> tags, ArrayList<String> contentTypes) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -117,5 +126,6 @@ public class Post implements Parcelable {
         this.longitude = longitude;
         this.description = description;
         this.tags = tags;
+        this.contentTypes = contentTypes;
     }
 }

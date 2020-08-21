@@ -54,4 +54,9 @@
     <string name="address">Address</string>
     <string name="report">Report</string>
     <string name="images">Images</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="audios">Audios</string>
+    <string name="first_hand_experience">First-hand Experience</string>
+    <string name="videos">Videos</string>
+    <string name="new_posts">New Posts</string>
 </resources>

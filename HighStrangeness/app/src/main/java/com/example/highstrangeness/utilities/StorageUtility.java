@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -31,7 +30,6 @@ public class StorageUtility {
     }
 
     public static boolean success;
-    public static Uri imageUri;
 
     private static FirebaseStorage storage = FirebaseStorage.getInstance();
     private static StorageMetadata metadata = new StorageMetadata.Builder()
@@ -76,7 +74,7 @@ public class StorageUtility {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Toast.makeText(context, "Profile Picture Added", Toast.LENGTH_SHORT).show();
-                    getProfileImage(user.getUid(), size, imageView, context);
+                    setProfileImage(user.getUid(), size, imageView);
                     success = true;
                     Log.d(TAG, "onSuccess: ");
                 }
@@ -89,66 +87,6 @@ public class StorageUtility {
             });
         }
         return success;
-    }
-
-    public static void getProfileImage(String id, int size, final ImageView imageView, Context context) {
-        StorageReference storageReference = storage.getReference();
-        StorageReference imageReference = storageReference.child("images");
-        StorageReference profileImagesReference = imageReference.child("profileImages");
-        StorageReference userImageReference = profileImagesReference.child(id);
-
-        StringBuilder ref = new StringBuilder(id);
-        switch (size) {
-            case 0:
-                ref.append("_50x50");
-                break;
-            case 1:
-                ref.append("_75x75");
-                break;
-            case 2:
-                ref.append("_150x150");
-                break;
-        }
-        ref.append(".png");
-
-            final long mb = 1024 * 1024;
-            userImageReference.child(ref.toString()).getBytes(mb).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    imageView.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                    Log.d(TAG, "onSuccess: set image");
-                }
-            });
-    }
-
-    public static void setProfileImageToImageButton(String id, int size, final ImageButton imageButton, Context context) {
-        StorageReference storageReference = storage.getReference();
-        StorageReference imageReference = storageReference.child("images");
-        StorageReference profileImagesReference = imageReference.child("profileImages");
-        StorageReference userImageReference = profileImagesReference.child(id);
-
-        StringBuilder ref = new StringBuilder(id);
-        switch (size) {
-            case 0:
-                ref.append("_50x50");
-                break;
-            case 1:
-                ref.append("_75x75");
-                break;
-            case 2:
-                ref.append("_150x150");
-                break;
-        }
-        ref.append(".png");
-
-        final long mb = 1024 * 1024;
-        userImageReference.child(ref.toString()).getBytes(mb).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                imageButton.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                Log.d(TAG, "onSuccess: set image");
-            }
-        });
     }
 
     public static void getListOfPostImages(String postId, Context context) {
@@ -186,14 +124,27 @@ public class StorageUtility {
                 });
     }
 
-    public static void setPostImageToImageButton(String name, String id, int size, final ImageButton imageButton, Context context) {
+    public static void setProfileImage(String id, int size, final ImageView imageView) {
+        StorageReference storageReference = storage.getReference();
+        StorageReference imageReference = storageReference.child("images");
+        StorageReference profileImagesReference = imageReference.child("profileImages");
+        StorageReference userImageReference = profileImagesReference.child(id);
+
+        setImageToImageView(id, size, imageView, userImageReference);
+    }
+
+    public static void setPostImage(String name, String id, int size, final ImageView imageView) {
         StorageReference storageReference = storage.getReference();
         StorageReference imageReference = storageReference.child("images");
         StorageReference postsReference = imageReference.child("posts");
         StorageReference postImagesReference = postsReference.child(id);
 
+        setImageToImageView(name, size, imageView, postImagesReference);
+    }
 
-        StringBuilder ref = new StringBuilder(name);
+    public static void setImageToImageView(String id, int size, final ImageView imageView, StorageReference reference) {
+
+        StringBuilder ref = new StringBuilder(id);
         switch (size) {
             case 0:
                 ref.append("_50x50");
@@ -206,14 +157,12 @@ public class StorageUtility {
                 break;
         }
         ref.append(".png");
-        Log.d(TAG, "setPostImageToImageButton: " + id);
-        Log.d(TAG, "setPostImageToImageButton: " + ref.toString());
 
         final long mb = 1024 * 1024;
-        postImagesReference.child(ref.toString()).getBytes(mb).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        reference.child(ref.toString()).getBytes(mb).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
-                imageButton.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                imageView.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                 Log.d(TAG, "onSuccess: set image");
             }
         });

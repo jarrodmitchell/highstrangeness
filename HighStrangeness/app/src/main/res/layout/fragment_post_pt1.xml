@@ -30,6 +30,7 @@
                 android:id="@+id/textViewDetails"
                 style="@style/TextViewTitleEncounter"
                 android:layout_margin="32dp"
+                android:textColor="@color/colorPrimaryDark"
 
                 android:text="@string/details"
                 app:layout_constraintStart_toStartOf="parent"
@@ -62,8 +63,9 @@
                 style="@style/TextViewTitleEncounter"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="16dp"
+                android:textColor="@color/colorPrimaryDark"
 
-                android:text="First-hand Experience"
+                android:text="@string/first_hand_experience"
                 android:textSize="13sp"
 
                 app:layout_constraintStart_toStartOf="parent"
@@ -83,6 +85,7 @@
                 style="@style/TextViewTitleEncounter"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="16dp"
+                android:textColor="@color/colorPrimaryDark"
 
                 android:text="@string/date"
                 android:textSize="13sp"
@@ -96,18 +99,18 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="8dp"
                 android:textColor="@color/gray"
-                android:textSize="15sp"
+                style="@style/TextViewTitleEncounter.Light"
 
-                android:fontFamily="@font/heebo_light"
                 android:text="@string/mm_dd_yyyy"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textViewDateLabel" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <Button
                 android:id="@+id/buttonPickDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
+                style="@style/ButtonMinor"
 
                 android:text="@string/pick_date"
 
@@ -119,6 +122,7 @@
                 style="@style/TextViewTitleEncounter"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="16dp"
+                android:textColor="@color/colorPrimaryDark"
 
                 android:text="@string/location"
                 android:textSize="13sp"
@@ -132,16 +136,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="8dp"
-                android:textSize="15sp"
+                style="@style/TextViewTitleEncounter.Light"
                 android:textColor="@color/gray"
 
-                android:fontFamily="@font/heebo_light"
                 android:text="@string/address"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textViewLocationTitle" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <Button
                 android:id="@+id/buttonPickLocation"
+                style="@style/ButtonMinor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

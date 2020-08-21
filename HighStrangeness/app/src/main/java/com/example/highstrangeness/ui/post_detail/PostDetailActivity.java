@@ -8,6 +8,7 @@ import android.location.Address;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.highstrangeness.R;
@@ -44,6 +45,7 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
+        setTitle("");
 
         if (getIntent() != null) {
             Post post = getIntent().getParcelableExtra(MainActivity.EXTRA_POST);
@@ -61,8 +63,8 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
                 StorageUtility.getListOfPostImages(postId, this);
 
                 String id = post.getUserId();
-                ImageButton imageButton = findViewById(R.id.buttonUserPostDetail);
-                StorageUtility.setProfileImageToImageButton(id, 1, imageButton, this);
+                ImageView imageViewUserPic = findViewById(R.id.imageViewUserPostDetail);
+                StorageUtility.setProfileImage(id, 1, imageViewUserPic);
 
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append(post.getUsername());
