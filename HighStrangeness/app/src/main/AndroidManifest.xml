@@ -20,7 +20,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.post_detail.PostDetailActivity"></activity>
+        <activity android:name=".ui.account.my_posts.MyPostsActivity"></activity>
+        <activity android:name=".ui.post_detail.image_viewer.ImageViewerActivity" />
+        <activity android:name=".ui.post_detail.PostDetailActivity" />
         <activity android:name=".ui.location_picker.LocationPickerActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

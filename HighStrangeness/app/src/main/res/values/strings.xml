@@ -59,4 +59,8 @@
     <string name="first_hand_experience">First-hand Experience</string>
     <string name="videos">Videos</string>
     <string name="new_posts">New Posts</string>
+    <string name="post_image">post image</string>\
+    <string name="delete">Delete</string>
+    <string name="flag">Flag</string>
+    <string name="bookmark">Bookmark</string>
 </resources>

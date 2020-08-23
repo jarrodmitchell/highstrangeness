@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -44,6 +46,9 @@ import java.util.Set;
 
 public class PostUtility {
     public static final String TAG = "PostUtility";
+    public static final String ACTION_SEND_FILTERED_LIST = "ACTION_SEND_FILTERED_LIST";
+    public static final String ACTION_SEND_ALERT_POST_DELETED = "ACTION_SEND_ALERT_POST_DELETED";
+    public static final String EXTRA_FILTERED_POSTS = "EXTRA_FILTERED_POSTS";
 
     public static final String FIELD_UID = "userId";
     public static final String FIELD_TITLE = "title";
@@ -133,7 +138,7 @@ public class PostUtility {
 
         final List<Post> posts = new ArrayList<>();
 
-        db.collection("posts").orderBy(FIELD_POST_DATE, Query.Direction.DESCENDING).addSnapshotListener((Activity) context, new EventListener<QuerySnapshot>() {
+        db.collection("posts").orderBy(FIELD_POST_DATE, Query.Direction.ASCENDING).addSnapshotListener((Activity) context, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable final QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (value != null) {
@@ -185,13 +190,37 @@ public class PostUtility {
         });
     }
 
-    private static void parsePosts(Context context, Task<QuerySnapshot> task) {
-        final SetPostListListener setPostListListener = (SetPostListListener) context;
+    public static void getMyPosts(final Context context) {
+        Log.d(TAG, "getMyPosts: get mines");
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String id = currentUser.getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("posts").whereEqualTo(FIELD_UID, id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    Log.d(TAG, "onComplete: complete");
+                    if (task.isSuccessful()) {
+                        parsePosts(context, task);
+                    }else {
+                        if (task.getException() != null) {
+                            Log.d(TAG, "onComplete: " + task.getException().getMessage());
+                        }
+                    }
+                }
+            });
+        }
+    }
 
-        final List<Post> posts = new ArrayList<>();
+    private static void parsePosts(final Context context, Task<QuerySnapshot> task) {
 
+        final ArrayList<Post> posts = new ArrayList<>();
+
+        Log.d(TAG, "parsePosts: go");
         if (task.isSuccessful()) {
+            Log.d(TAG, "parsePosts: success");
             if (task.getResult() != null) {
+                final int max = task.getResult().getDocuments().size();
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     String id = document.getId();
                     String userId = (String) document.getData().get(FIELD_UID);
@@ -206,6 +235,7 @@ public class PostUtility {
                     String description = (String) document.getData().get(FIELD_DESCRIPTION);
                     ArrayList<String> tags = (ArrayList<String>) document.getData().get(FIELD_TAGS);
                     ArrayList<String> contentTypes = (ArrayList<String>) document.getData().get(FIELD_CONTENT_TYPES);
+                    Log.d(TAG, "parsePosts: " + contentTypes.size());
 
                     final Post post = new Post(id, userId, title, firstHand, date, latitude, longitude, description, tags, contentTypes);
 
@@ -219,6 +249,13 @@ public class PostUtility {
                                         if (task.getResult() != null) {
                                             String username = task.getResult().getString("username");
                                             post.setUsername(username);
+                                            posts.add(post);
+                                            if (max == posts.size()) {
+                                                Log.d(TAG, "parsePosts: um send");
+                                                Intent intent = new Intent(ACTION_SEND_FILTERED_LIST);
+                                                intent.putExtra(EXTRA_FILTERED_POSTS, posts);
+                                                context.sendBroadcast(intent);
+                                            }
                                         }
                                     } else {
                                         Log.d(TAG, "Error getting documents: ", task.getException());
@@ -226,13 +263,24 @@ public class PostUtility {
                                 }
                             });
 
-                    posts.add(post);
                     Log.d(TAG, "onComplete: posts count: " + posts.size());
                 }
-                setPostListListener.setPostListener(posts);
             }
         } else {
             Log.d(TAG, "Error getting documents: ", task.getException());
         }
+    }
+
+    public static void deletePost(final Context context, String id) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("posts").document(id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Intent intent = new Intent(ACTION_SEND_ALERT_POST_DELETED);
+                    context.sendBroadcast(intent);
+                }
+            }
+        });
     }
 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.ui.account.edit_account.EditAccountActivity;
+import com.example.highstrangeness.ui.account.my_posts.MyPostsActivity;
 import com.example.highstrangeness.ui.main.MainActivity;
 import com.example.highstrangeness.utilities.StorageUtility;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,7 +22,8 @@ import com.google.firebase.auth.FirebaseUser;
 public class AccountActivity extends AppCompatActivity {
     
     public static final String TAG = "AccountActivity";
-    public static final int REQUEST_CODE = 0x0321;
+    public static final int REQUEST_CODE_EDIT_ACCOUNT = 0x0321;
+    public static final int REQUEST_CODE_MY_POSTS = 0x0432;
 
     ImageView imageViewProfilePic;
 
@@ -35,7 +37,14 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AccountActivity.this, EditAccountActivity.class);
-                startActivityForResult(intent, REQUEST_CODE);
+                startActivityForResult(intent, REQUEST_CODE_EDIT_ACCOUNT);
+            }
+        });
+        findViewById(R.id.buttonMyPosts).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AccountActivity.this, MyPostsActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_MY_POSTS);
             }
         });
 
@@ -43,7 +52,7 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     private void updateViews()  {
-        imageViewProfilePic = ((ImageView) findViewById(R.id.imageViewProfilePictureAccountScreen));
+        imageViewProfilePic = findViewById(R.id.imageViewProfilePictureAccountScreen);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             Log.d(TAG, "updateViews: username = " + user.getDisplayName());
@@ -53,7 +62,7 @@ public class AccountActivity extends AppCompatActivity {
             StorageUtility.setProfileImage(user.getUid(), 2, imageViewProfilePic);
             ((TextView) findViewById(R.id.textViewUsernameAccountScreen)).setText(user.getDisplayName());
             ((TextView) findViewById(R.id.textViewEmailAccountScreen)).setText(user.getEmail());
-            ((Button) findViewById(R.id.buttonLogOut)).setOnClickListener(new View.OnClickListener() {
+            (findViewById(R.id.buttonLogOut)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.d(TAG, "onClick: ");
@@ -67,6 +76,10 @@ public class AccountActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        updateViews();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CODE_EDIT_ACCOUNT) {
+                updateViews();
+            }
+        }
     }
 }

@@ -19,6 +19,7 @@ public class Post implements Parcelable {
         longitude = in.readDouble();
         description = in.readString();
         tags = in.createStringArrayList();
+        contentTypes = in.createStringArrayList();
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -50,6 +51,7 @@ public class Post implements Parcelable {
         parcel.writeDouble(longitude);
         parcel.writeString(description);
         parcel.writeStringList(tags);
+        parcel.writeStringList(contentTypes);
     }
 
     private String id;

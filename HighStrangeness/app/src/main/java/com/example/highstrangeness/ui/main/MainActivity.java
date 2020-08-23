@@ -6,11 +6,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.objects.Post;
@@ -32,17 +35,22 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements PostUtility.SetPostListListener,
-        ListFragment.GetPostsListener, ListFragment.OnItemClickListener {
+        ListFragment.GetPostsListener, ListFragment.OnItemClickListener, MapFragment.GetPostsListener,
+        MapFragment.OnInfoViewClickListener {
     
     public static final String TAG = "MainActivity";
     public static final String EXTRA_POST = "EXTRA_POST";
     public static final String ACTION_LIST_UPDATED = "ACTION_LIST_UPDATED";
+    public static final String FRAG_ID_MAP = "FRAG_ID_MAP";
+    public static final String FRAG_ID_LIST = "FRAG_ID_LIST";
+    public static final String FRAG_ID_MEDIA_CAP = "FRAG_ID_MEDIA_CAP";
     public static final int REQUEST_CODE_ACCOUNT_SCREEN = 0x034;
 
+
     @Override
-    public void onClick(int position) {
+    public void onClick(Post post) {
         Intent intent = new Intent(MainActivity.this, PostDetailActivity.class);
-        intent.putExtra(EXTRA_POST, postList.get(position));
+        intent.putExtra(EXTRA_POST, post);
         startActivity(intent);
     }
 
@@ -79,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
         //check whether all values in each list are the same
         for (int i = 0; i < postList1.size() && i < postList2.size(); i++) {
             //if they are, don't update the list
+            Log.d(TAG, "shouldUpdateList: list 1 " + postList1.get(i));
+            Log.d(TAG, "shouldUpdateList: list 2 " + postList2.get(i));
             if (postList1.get(i).getId().equals(postList2.get(i).getId()) && i == max-1) {
                 return false;
             }else if(!postList1.get(i).getId().equals(postList2.get(i).getId())) {
@@ -90,19 +100,13 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
         return bool;
     }
 
-    public void s(List<Post> p, String name) {
-        for (Post post: p) {
-            Log.d(TAG, "s: post " + name + post.getTitle());
-        }
-    }
-
 
     FloatingActionButton fab;
     List<Post> postList = new ArrayList<>();
-    final Fragment listFragment = new ListFragment();
-    final Fragment mapFragment = new MapFragment();
-    final Fragment mediaCaptureFragment = new MediaCaptureFragment();
     BottomNavigationView navView;
+    ListFragment listFragment = new ListFragment();
+    MapFragment mapFragment = new MapFragment();
+    MediaCaptureFragment mediaCaptureFragment = new MediaCaptureFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +123,13 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
                 startActivity(intent);
             }
         });
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.frame_layout_nav,  mediaCaptureFragment, FRAG_ID_MEDIA_CAP);
+        fragmentTransaction.add(R.id.frame_layout_nav, listFragment, FRAG_ID_LIST);
+        fragmentTransaction.add(R.id.frame_layout_nav, mapFragment, FRAG_ID_MAP);
+        fragmentTransaction.commit();
+        getSupportFragmentManager().executePendingTransactions();
 
         navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -144,12 +155,11 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
                 return false;
             }
         });
-        Log.d(TAG, "onCreate: set selected");
         navView.setSelectedItemId(R.id.navigation_map);
     }
 
     private void displayFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout_nav, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout_nav, fragment, null).commit();
     }
 
     @Override

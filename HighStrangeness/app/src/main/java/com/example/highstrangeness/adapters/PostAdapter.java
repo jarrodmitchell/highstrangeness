@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.objects.Post;
+import com.example.highstrangeness.ui.account.FilteredPostListFragment;
+import com.example.highstrangeness.ui.account.my_posts.MyPostsActivity;
 import com.example.highstrangeness.ui.main.list.ListFragment;
 import com.example.highstrangeness.utilities.StorageUtility;
 
@@ -26,16 +28,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     public static final String TAG = "PostAdapter";
 
-    Context context;
-    LayoutInflater layoutInflater;
-    List<Post> posts;
-    static ListFragment.OnItemClickListener mOnItemClickListener;
+    private LayoutInflater layoutInflater;
+    private static List<Post> posts;
+    private static ListFragment.OnItemClickListener mOnItemClickListener = null;
+    private static FilteredPostListFragment.FilteredOnItemClickListener onFilteredItemClickListener = null;
 
-    public PostAdapter(Context context, List<Post> posts, ListFragment.OnItemClickListener onItemClickListener) {
-        this.context = context;
+    public PostAdapter(Context context, List<Post> posts, ListFragment.OnItemClickListener onItemClickListener,
+                       FilteredPostListFragment.FilteredOnItemClickListener filteredOnItemClickListener) {
         this.layoutInflater = LayoutInflater.from(context);
-        this.posts = posts;
+        PostAdapter.posts = posts;
         mOnItemClickListener = onItemClickListener;
+        onFilteredItemClickListener = filteredOnItemClickListener;
     }
 
 
@@ -67,7 +70,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         public void onClick(View view) {
             Log.d(TAG, "onClick: ");
             getAdapterPosition();
-            mOnItemClickListener.onClick(getAdapterPosition());
+            if (mOnItemClickListener != null) {
+                mOnItemClickListener.onClick(posts.get(getAdapterPosition()));
+            }else {
+                onFilteredItemClickListener.onClick(posts.get(getAdapterPosition()));
+            }
         }
     }
 
@@ -108,7 +115,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             ArrayList<String> contentTypesList = posts.get(position).getContentTypes();
             stringBuilder = new StringBuilder();
 
-            for (int i = 0; i < contentTypesList.size(); i ++) {
+            Log.d(TAG, "onBindViewHolder: content type size " + contentTypesList.size());
+            for (int i = 0; i < contentTypesList.size(); i++) {
                 stringBuilder.append(contentTypesList.get(i));
                 if (i != contentTypesList.size() - 1) {
                     stringBuilder.append(" · ");

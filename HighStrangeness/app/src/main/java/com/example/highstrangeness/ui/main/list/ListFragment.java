@@ -10,10 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,14 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.highstrangeness.R;
-import com.example.highstrangeness.adapters.MediaAdapter;
 import com.example.highstrangeness.adapters.PostAdapter;
 import com.example.highstrangeness.objects.Post;
 import com.example.highstrangeness.ui.main.MainActivity;
-import com.example.highstrangeness.utilities.PostUtility;
 
 import java.util.List;
-import java.util.Objects;
 
 public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -50,7 +44,7 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     public interface OnItemClickListener {
-        void onClick(int position);
+        void onClick(Post post);
     }
 
 
@@ -97,7 +91,7 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     private void setRecycleView() {
-        recyclerView.setAdapter(new PostAdapter(getActivity(), getPostsListener.getPosts(), onItemClickListener));
+        recyclerView.setAdapter(new PostAdapter(getActivity(), getPostsListener.getPosts(), onItemClickListener, null));
     }
 
     @Override
@@ -132,7 +126,7 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
-    public class UpdatedListReceiver extends BroadcastReceiver {
+    private class UpdatedListReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() != null && intent.getAction().equals(MainActivity.ACTION_LIST_UPDATED)) {

@@ -40,16 +40,6 @@ public class LocationPickerFragment extends Fragment {
     public static final String TAG = "LocationPickerFragment";
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
-
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
         @Override
         public void onMapReady(GoogleMap googleMap) {
             Log.d(TAG, "onMapReady: ready");
@@ -72,7 +62,6 @@ public class LocationPickerFragment extends Fragment {
             });
 
             if (getActivity() != null && PermissionsUtility.checkForGPSPermission(getActivity())) {
-                LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
@@ -93,8 +82,8 @@ public class LocationPickerFragment extends Fragment {
         _location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if  (_location != null) {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(_location.getLatitude(), _location.getLongitude()), 6));
+            shouldUpdateLocation = false;
         }
-        shouldUpdateLocation = false;
         Log.d(TAG, "onMapReady: permissions here");
     }
 
