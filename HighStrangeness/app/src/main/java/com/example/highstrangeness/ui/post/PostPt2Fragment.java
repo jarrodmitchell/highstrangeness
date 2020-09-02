@@ -1,5 +1,6 @@
 package com.example.highstrangeness.ui.post;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -32,6 +33,7 @@ import com.example.highstrangeness.adapters.OldFilesAdapter;
 import com.example.highstrangeness.adapters.SelectedFilesAdapter;
 import com.example.highstrangeness.objects.NewPost;
 import com.example.highstrangeness.objects.Post;
+import com.example.highstrangeness.ui.main.MainActivity;
 import com.example.highstrangeness.utilities.StorageUtility;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -60,6 +62,7 @@ public class PostPt2Fragment extends Fragment {
     public static final String EXTRA_STRING_LIST = "EXTRA_STRING_LIST";
     public static final String EXTRA_FILE_INDEX = "EXTRA_FILE_INDEX";
     public static final String ACTION_UPDATE_RECYCLE_VIEW = "ACTION_UPDATE_RECYCLE_VIEW";
+    public static final String ACTION_SET_RECYCLE_VIEW_OLD_POST = "ACTION_SET_RECYCLE_VIEW_OLD_POST";
     public static final String ACTION_UPDATE_RECYCLE_VIEW_OLD_POST = "ACTION_UPDATE_RECYCLE_VIEW_OLD_POST";
 
     public PostPt2Fragment() {
@@ -73,7 +76,7 @@ public class PostPt2Fragment extends Fragment {
     }
 
     public interface AddPostToFirebase {
-        void addPostToFirebase(String[] tags, String id);
+        void addPostToFirebase(String[] tags, String id, List<String> imageNameList);
     }
 
     public interface SaveTagsListener {
@@ -121,6 +124,7 @@ public class PostPt2Fragment extends Fragment {
     OldFilesAdapter oldFilesAdapter;
     Context context;
     StorageReference storageReference;
+    List<String> imageNameList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -134,6 +138,7 @@ public class PostPt2Fragment extends Fragment {
         return inflater.inflate(R.layout.fragment_post_pt2, container, false);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -181,9 +186,9 @@ public class PostPt2Fragment extends Fragment {
                 public void onClick(View view) {
                     String[] tags = editTextTags.getText().toString().trim().split(",");
                     if (getOldPostListener.getPostListener() != null)  {
-                        addPostToFirebase.addPostToFirebase(tags, getOldPostListener.getPostListener().getId());
+                        addPostToFirebase.addPostToFirebase(tags, getOldPostListener.getPostListener().getId(), imageNameList);
                     }else{
-                        addPostToFirebase.addPostToFirebase(tags, null);
+                        addPostToFirebase.addPostToFirebase(tags, null, null);
                     }
                 }
             });
@@ -280,12 +285,12 @@ public class PostPt2Fragment extends Fragment {
                         stringBuilder.append(",");
                     }
                 }
-                buttonFinish.setText(R.string.edit_text);
+                buttonFinish.setText(R.string.edit_post);
                 editTextTags.setText(stringBuilder.toString());
             }else if (newPost != null && oldPost != null) {
                 Log.d(TAG, "onActivityCreated: old and new");
                 editTextTags.setText(newPost.getTags());
-                buttonFinish.setText(R.string.edit_text);
+                buttonFinish.setText(R.string.edit_post);
                 StorageUtility.getListOfPostImages(oldPost.getId(), getActivity());
                 updateMainRecycleView(newPost.getImageUris(), recyclerViewImages, "images");
             }else if (newPost != null) {
@@ -300,31 +305,38 @@ public class PostPt2Fragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() != null) {
-                if (intent.getAction().equals(PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW)) {
-                    String list = intent.getStringExtra(EXTRA_STRING_LIST);
-                    int index = intent.getIntExtra(EXTRA_FILE_INDEX, -1);
-                    Log.d(TAG, "onReceive: count");
-                    if (list != null && index > -1) {
-                        switch (list) {
-                            case "images":
-                                ArrayList<ArrayList<Uri>> mediaLists = getMediaListsListener.getMediaLists();
-                                if (mediaLists.get(0).size() > index) {
-                                    mediaLists.get(0).remove(index);
-                                    Log.d(TAG, "onReceive: index = " + index);
-                                    Log.d(TAG, "onReceive: count = " + mediaLists.get(0).size());
-                                }
-                                updateMainRecycleView(mediaLists.get(0), recyclerViewImages, list);
-                                break;
-                            case "audios":
+                Log.d(TAG, "onReceive: ");
+                switch (intent.getAction()) {
+                    case PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW:
+                        Log.d(TAG, "onReceive: " + ACTION_UPDATE_RECYCLE_VIEW);
+                        String list = intent.getStringExtra(EXTRA_STRING_LIST);
+                        int index = intent.getIntExtra(EXTRA_FILE_INDEX, -1);
+                        Log.d(TAG, "onReceive: count");
+                        if (list != null && index > -1) {
+                            switch (list) {
+                                case "images":
+                                    ArrayList<ArrayList<Uri>> mediaLists = getMediaListsListener.getMediaLists();
+                                    if (mediaLists.get(0).size() > index) {
+                                        mediaLists.get(0).remove(index);
+                                        Log.d(TAG, "onReceive: index = " + index);
+                                        Log.d(TAG, "onReceive: count = " + mediaLists.get(0).size());
+                                    }
+                                    updateMainRecycleView(mediaLists.get(0), recyclerViewImages, list);
+                                    break;
+                                case "audios":
 //                        updateRecycleView(audioUris, recyclerViewAudio);
-                                break;
-                            case "videos":
+                                    break;
+                                case "videos":
 //                        updateRecycleView(videoUris, index, recyclerViewVideo);
-                                break;
+                                    break;
+                            }
                         }
-                    }
-                } else if (intent.getAction().equals(PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW_OLD_POST)) {
-                    updateOldRecycleView(recyclerViewOldImages, intent.getStringArrayListExtra(PostPt2Fragment.EXTRA_STRING_LIST));
+                        break;
+
+                    case PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW_OLD_POST:
+                        updateOldRecycleView(recyclerViewOldImages, intent.getStringArrayListExtra(PostPt2Fragment.EXTRA_STRING_LIST));
+                        Log.d(TAG, "onReceive: " + ACTION_UPDATE_RECYCLE_VIEW_OLD_POST);
+                        break;
                 }
             }
         }
@@ -358,9 +370,10 @@ public class PostPt2Fragment extends Fragment {
 
     void updateOldRecycleView(RecyclerView recyclerView, List<String > list) {
         if (list != null) {
-            oldFilesAdapter = new OldFilesAdapter("images", getContext(), list, getOldPostListener.getPostListener().getId());
-            recyclerViewOldImages.setAdapter(oldFilesAdapter);
-            Log.d(TAG, "updateOldRecycleView: "+list.size());
+            imageNameList = list;
+            oldFilesAdapter = new OldFilesAdapter("images", getContext(), imageNameList, getOldPostListener.getPostListener().getId());
+            recyclerView.setAdapter(oldFilesAdapter);
+            Log.d(TAG, "updateOldRecycleView: "+imageNameList.size());
         }
     }
 

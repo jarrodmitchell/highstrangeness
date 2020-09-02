@@ -29,6 +29,7 @@ import java.util.List;
 public class StorageUtility {
     public static final String TAG = "StorageUtility";
     public static final String ACTION_PROFILE_PIC_UPDATED = "ACTION_PROFILE_PIC_UPDATED";
+    public static final String ACTION_POST_IMAGES_CHANGED = "ACTION_POST_IMAGES_CHANGED";
 
     public interface GetPostImageNamesListener {
         void getPostImagesName(List<String> imageNames);
@@ -51,6 +52,9 @@ public class StorageUtility {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d(TAG, "onSuccess: adding post image");
                 Toast.makeText(context, "Image \"" + uri.getLastPathSegment() +  "\" was successfully uploaded", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ACTION_POST_IMAGES_CHANGED);
+
+                context.sendBroadcast(intent);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -230,7 +234,6 @@ public class StorageUtility {
                 Log.d(TAG, "onComplete: list got");
                 if  (task.getResult() != null) {
                     Log.d(TAG, "onComplete: list result here");
-                    final Intent intent = new Intent(PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW_OLD_POST);
                     final int max = task.getResult().getItems().size();
                     Log.d(TAG, "onComplete: size =  " + max);
 
@@ -244,10 +247,10 @@ public class StorageUtility {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Log.d(TAG, "onComplete: Success deleting images");
-                                        if (index + 1 == max) {
-                                            Toast.makeText(context, imageName + " deleted", Toast.LENGTH_SHORT).show();
-                                            context.sendBroadcast(intent);
+                                        Log.d(TAG, "onComplete: Success deleting images " + index);
+                                        if (index + 1 == 4) {
+                                            Log.d(TAG, "onComplete: " + index);
+                                            getListOfPostImages(id, context);
                                         }
                                     }else {
                                         if (task.getException() != null) {

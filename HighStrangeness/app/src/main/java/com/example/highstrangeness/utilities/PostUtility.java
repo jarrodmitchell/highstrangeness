@@ -9,11 +9,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.highstrangeness.objects.Post;
+import com.example.highstrangeness.ui.main.MainActivity;
 import com.example.highstrangeness.ui.main.new_post.NewPostActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.collect.Lists;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -49,13 +51,13 @@ public class PostUtility {
     public static final String FIELD_POST_DATE = "postDate";
     public static final String FIELD_CONTENT_TYPES = "contentTypes";
 
-    public static void addPost(String postId, String title, boolean firstHand, Date date, double latitude,
-                               double longitude, String description, String[] tags,
+    public static void addPost(final String postId, final String title, final boolean firstHand, final Date date, final double latitude,
+                               final double longitude, final String description, final String[] tags,
                                final ArrayList<Uri> imageUriList, ArrayList<Uri> audioUriList,
-                               ArrayList<Uri> videoUriList, final Context context) {
+                               ArrayList<Uri> videoUriList, final Context context, List<String> listOldImages) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        Map<String, Object> docData = new HashMap<>();
+        final Map<String, Object> docData = new HashMap<>();
         docData.put(FIELD_UID, Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
         docData.put(FIELD_TITLE, title);
         docData.put(FIELD_FIRST_HAND, firstHand);
@@ -64,15 +66,22 @@ public class PostUtility {
         docData.put(FIELD_LONGITUDE, longitude);
         docData.put(FIELD_DESCRIPTION, description);
         docData.put(FIELD_POST_DATE, new Timestamp(Calendar.getInstance().getTime().getTime()));
-        List<String> contentTypes = new ArrayList<>();
-        if (imageUriList != null && !imageUriList.isEmpty()) {
-            contentTypes.add("Image");
-        }
-        if (audioUriList != null && !audioUriList.isEmpty()) {
-            contentTypes.add("Audio");
-        }
-        if (videoUriList != null && !videoUriList.isEmpty()) {
-            contentTypes.add("Video");
+        final List<String> contentTypes = new ArrayList<>();
+        if (postId == null) {
+            if (imageUriList != null && !imageUriList.isEmpty()) {
+                Log.d(TAG, "addPost: add image content type");
+                contentTypes.add("Image");
+            }
+            if (audioUriList != null && !audioUriList.isEmpty()) {
+                contentTypes.add("Audio");
+            }
+            if (videoUriList != null && !videoUriList.isEmpty()) {
+                contentTypes.add("Video");
+            }
+        }else {
+            if ((listOldImages != null && listOldImages.size() > 0) || (imageUriList != null && !imageUriList.isEmpty()) ) {
+                contentTypes.add("Image");
+            }
         }
 
         docData.put(FIELD_CONTENT_TYPES, contentTypes);
@@ -101,6 +110,10 @@ public class PostUtility {
                 public void onComplete(@NonNull Task<Void> task) {
                     Intent intent = new Intent(NewPostActivity.ACTION_SEND_ADD_POST_RESULT);
                     intent.putExtra("success", true);
+                    Post post = new Post(id, (String) docData.get(FIELD_UID), title, firstHand,
+                            date, latitude, longitude, description,
+                            Lists.newArrayList(tags != null ? tags : new String[0]), Lists.newArrayList(contentTypes));
+                    intent.putExtra(MainActivity.EXTRA_POST, post);
                     context.sendBroadcast(intent);
                 }
             })

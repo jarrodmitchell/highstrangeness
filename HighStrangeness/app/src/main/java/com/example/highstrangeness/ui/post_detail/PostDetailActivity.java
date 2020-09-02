@@ -17,6 +17,7 @@ import android.content.IntentFilter;
 import android.location.Address;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -62,6 +63,7 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
     }
 
     PostDeletedReceiver postDeletedReceiver;
+    PostMediaChangedReceiver postMediaChangedReceiver;
     RecyclerView recyclerView;
     Post post;
 
@@ -71,6 +73,7 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
         setContentView(R.layout.activity_post_detail);
         setTitle("");
         postDeletedReceiver = new PostDeletedReceiver();
+        postMediaChangedReceiver = new PostMediaChangedReceiver();
 
         if (getIntent() != null) {
             setViews(getIntent());
@@ -111,7 +114,11 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
             String tagsString = stringBuilder.toString();
             String description = post.getDescription();
 
-            ((TextView) findViewById(R.id.textViewUserNamePostDetail)).setText(username);
+            TextView textViewUsername = findViewById(R.id.textViewUserNamePostDetail);
+
+            if (textViewUsername.getText().toString().isEmpty()) {
+                textViewUsername.setText(username);
+            }
             ((TextView) findViewById(R.id.textViewDatePostDetail)).setText(date);
             ((TextView) findViewById(R.id.textViewTitlePostDetail)).setText(title);
             ((TextView) findViewById(R.id.textViewTagsPostDetail)).setText(tagsString);
@@ -152,12 +159,14 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
     protected void onStart() {
         super.onStart();
         registerReceiver(postDeletedReceiver, new IntentFilter(PostUtility.ACTION_SEND_ALERT_POST_DELETED));
+        registerReceiver(postMediaChangedReceiver, new IntentFilter(StorageUtility.ACTION_POST_IMAGES_CHANGED));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         unregisterReceiver(postDeletedReceiver);
+        unregisterReceiver(postMediaChangedReceiver);
     }
 
     private void navigateToNewPostActivity() {
@@ -197,6 +206,7 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
         if (resultCode == RESULT_OK && requestCode ==  REQUEST_CODE_EDIT_POST && data != null) {
             setViews(data);
         }
+        updateMedia();
     }
 
     private void closeActivity() {
@@ -214,6 +224,21 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
                 closeActivity();
             }
         }
+    }
+
+    private class PostMediaChangedReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction() != null &&
+                    intent.getAction().equals(StorageUtility.ACTION_POST_IMAGES_CHANGED)) {
+                updateMedia();
+            }
+        }
+    }
+
+    private void updateMedia() {
+        Log.d(TAG, "updateMedia: ");
+        StorageUtility.getListOfPostImages(post.getId(), this);
     }
 
 }

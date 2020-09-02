@@ -28,6 +28,7 @@ import com.example.highstrangeness.dialogs.DatePickerFragment;
 import com.example.highstrangeness.objects.NewPost;
 import com.example.highstrangeness.objects.Post;
 import com.example.highstrangeness.ui.location_picker.LocationPickerActivity;
+import com.example.highstrangeness.ui.main.MainActivity;
 import com.example.highstrangeness.ui.post.PostPt1Fragment;
 import com.example.highstrangeness.ui.post.PostPt2Fragment;
 import com.example.highstrangeness.ui.post_detail.PostDetailActivity;
@@ -80,6 +81,7 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
         RecyclerView recyclerViewOldImages = findViewById(R.id.recyclerViewOldImages);
 
         if (!imageNames.isEmpty()) {
+            Log.d(TAG, "getPostImagesName: in");
             recyclerViewOldImages.setVisibility(View.VISIBLE);
             Intent intent = new Intent(PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW_OLD_POST);
             intent.putExtra(PostPt2Fragment.EXTRA_STRING_LIST, Lists.newArrayList(imageNames));
@@ -132,13 +134,13 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
     }
 
     @Override
-    public void addPostToFirebase(String[] tags, String id) {
+    public void addPostToFirebase(String[] tags, String id, List<String> imageNameList) {
         if (newPost != null) {
             addPostResultReceiver = new AddPostResultReceiver();
             registerReceiver(addPostResultReceiver, new IntentFilter(ACTION_SEND_ADD_POST_RESULT));
             PostUtility.addPost(id, newPost.getTitle(), newPost.isFirstHand(), newPost.getDate(),
                     newPost.getLatitude(), newPost.getLongitude(), newPost.getDescription(), tags, imageUris,
-                    audioUris, videoUris, this);
+                    audioUris, videoUris, this, imageNameList);
         }
     }
 
@@ -152,11 +154,19 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
                     if (oldPost == null) {
                         finish();
                     }else{
-
+                        returnPost(intent);
                     }
                 }
             }
         }
+    }
+
+    private void returnPost(Intent intent) {
+        Log.d(TAG, "returnPost: ");
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(MainActivity.EXTRA_POST, intent.getParcelableExtra(MainActivity.EXTRA_POST));
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 
     @Override
