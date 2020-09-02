@@ -1,6 +1,7 @@
 package com.example.highstrangeness.ui.post_detail;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,6 +30,7 @@ import com.example.highstrangeness.R;
 import com.example.highstrangeness.adapters.MediaAdapter;
 import com.example.highstrangeness.objects.Post;
 import com.example.highstrangeness.ui.main.MainActivity;
+import com.example.highstrangeness.ui.main.new_post.NewPostActivity;
 import com.example.highstrangeness.utilities.LocationUtility;
 import com.example.highstrangeness.utilities.PostUtility;
 import com.example.highstrangeness.utilities.StorageUtility;
@@ -40,11 +42,13 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostDetailActivity extends AppCompatActivity implements LocationUtility.GetAddressAsyncTask.ReturnAddressListener, StorageUtility.GetPostImageNamesListener {
+public class PostDetailActivity extends AppCompatActivity implements LocationUtility.ReturnAddressListener, StorageUtility.GetPostImageNamesListener {
 
     public static final String TAG =  "PostDetailActivity";
     public static final String EXTRA_IMAGE_NAME = "EXTRA_IMAGE_NAME";
     public static final String EXTRA_POST_ID = "EXTRA_POST_ID";
+    public static final String EXTRA_OLD_POST = "EXTRA_OLD_POST";
+    public static final int REQUEST_CODE_EDIT_POST = 0x87;
 
     @Override
     public void getPostImagesName(List<String> imageNames) {
@@ -69,47 +73,49 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
         postDeletedReceiver = new PostDeletedReceiver();
 
         if (getIntent() != null) {
-            post = getIntent().getParcelableExtra(MainActivity.EXTRA_POST);
-            if (post != null) {
+            setViews(getIntent());
+        }
+    }
 
-                LocationUtility.GetAddressAsyncTask getAddressAsyncTask = new LocationUtility.GetAddressAsyncTask(this);
-                getAddressAsyncTask.execute(new LatLng(post.getLatitude(), post.getLongitude()));
+    private void setViews(Intent intent) {
+        post = intent.getParcelableExtra(MainActivity.EXTRA_POST);
+        if (post != null) {
+            LocationUtility.getAddress(this, new LatLng(post.getLatitude(), post.getLongitude()), this);
 
-                recyclerView = findViewById(R.id.recyclerViewImagesPostDetail);
-                recyclerView.setLayoutManager(
-                        new LinearLayoutManager(PostDetailActivity.this,
-                                LinearLayoutManager.HORIZONTAL,
-                                false));
-                StorageUtility.getListOfPostImages(post.getId(), this);
+            recyclerView = findViewById(R.id.recyclerViewImagesPostDetail);
+            recyclerView.setLayoutManager(
+                    new LinearLayoutManager(PostDetailActivity.this,
+                            LinearLayoutManager.HORIZONTAL,
+                            false));
+            StorageUtility.getListOfPostImages(post.getId(), this);
 
-                String id = post.getUserId();
-                ImageView imageViewUserPic = findViewById(R.id.imageViewUserPostDetail);
-                StorageUtility.setProfileImage(id, 1, imageViewUserPic);
+            String id = post.getUserId();
+            ImageView imageViewUserPic = findViewById(R.id.imageViewUserPostDetail);
+            StorageUtility.setProfileImage(this, id, 1, imageViewUserPic);
 
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(post.getUsername());
-                stringBuilder.append(" ·");
-                String username = stringBuilder.toString();
-                String date = DateFormat.getDateInstance().format(post.getDate());
-                String title = post.getTitle();
-                stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(post.getUsername());
+            stringBuilder.append(" ·");
+            String username = stringBuilder.toString();
+            String date = DateFormat.getDateInstance().format(post.getDate());
+            String title = post.getTitle();
+            stringBuilder = new StringBuilder();
 
-                ArrayList<String> tags = post.getTags();
-                for (int i = 0; i < tags.size(); i ++) {
-                    stringBuilder.append(tags.get(i));
-                    if (i != tags.size() - 1) {
-                        stringBuilder.append(", ");
-                    }
+            ArrayList<String> tags = post.getTags();
+            for (int i = 0; i < tags.size(); i ++) {
+                stringBuilder.append(tags.get(i));
+                if (i != tags.size() - 1) {
+                    stringBuilder.append(", ");
                 }
-                String tagsString = stringBuilder.toString();
-                String description = post.getDescription();
-
-                ((TextView) findViewById(R.id.textViewUserNamePostDetail)).setText(username);
-                ((TextView) findViewById(R.id.textViewDatePostDetail)).setText(date);
-                ((TextView) findViewById(R.id.textViewTitlePostDetail)).setText(title);
-                ((TextView) findViewById(R.id.textViewTagsPostDetail)).setText(tagsString);
-                ((TextView) findViewById(R.id.textViewDescriptionPostDetail)).setText(description);
             }
+            String tagsString = stringBuilder.toString();
+            String description = post.getDescription();
+
+            ((TextView) findViewById(R.id.textViewUserNamePostDetail)).setText(username);
+            ((TextView) findViewById(R.id.textViewDatePostDetail)).setText(date);
+            ((TextView) findViewById(R.id.textViewTitlePostDetail)).setText(title);
+            ((TextView) findViewById(R.id.textViewTagsPostDetail)).setText(tagsString);
+            ((TextView) findViewById(R.id.textViewDescriptionPostDetail)).setText(description);
         }
     }
 
@@ -132,6 +138,7 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
                 showDeletePostDialog();
                 break;
             case R.id.item_edit:
+                navigateToNewPostActivity();
                 break;
             case R.id.item_favorite:
                 break;
@@ -142,15 +149,21 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         registerReceiver(postDeletedReceiver, new IntentFilter(PostUtility.ACTION_SEND_ALERT_POST_DELETED));
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         unregisterReceiver(postDeletedReceiver);
+    }
+
+    private void navigateToNewPostActivity() {
+        Intent intent = new Intent(PostDetailActivity.this, NewPostActivity.class);
+        intent.putExtra(EXTRA_OLD_POST, post);
+        startActivityForResult(intent, REQUEST_CODE_EDIT_POST);
     }
 
     private void showDeletePostDialog() {
@@ -175,7 +188,20 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
     }
 
     private void deletePost() {
-        PostUtility.deletePost(this, post.getId());
+        PostUtility.deletePost(this, post.getId(), post.getContentTypes());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode ==  REQUEST_CODE_EDIT_POST && data != null) {
+            setViews(data);
+        }
+    }
+
+    private void closeActivity() {
+        setResult(RESULT_OK);
+        finish();
     }
 
     private class PostDeletedReceiver extends BroadcastReceiver {
@@ -184,9 +210,8 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
             if (intent != null && intent.getAction() != null &&
                     intent.getAction().equals(PostUtility.ACTION_SEND_ALERT_POST_DELETED)) {
                 Toast.makeText(context, "Post Deleted", Toast.LENGTH_SHORT).show();
-                Intent intentResult = new Intent();
-                PostDetailActivity.this.setResult(RESULT_OK, intentResult);
-                PostDetailActivity.this.finish();
+//                PostUtility.getAllPosts(context);
+                closeActivity();
             }
         }
     }

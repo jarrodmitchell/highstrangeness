@@ -1,6 +1,10 @@
 package com.example.highstrangeness.ui.user_auth.add_profile_picture;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -18,6 +22,9 @@ import com.example.highstrangeness.utilities.StorageUtility;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -38,6 +45,7 @@ public class AddProfilePictureFragment extends Fragment {
     }
 
     NavigateToMainScreenListener navigateToMainScreenListener;
+    ProfilePicUpdatedReceiver profilePicUpdatedReceiver;
     FirebaseStorage storage = FirebaseStorage.getInstance();
 
     public AddProfilePictureFragment() {
@@ -70,7 +78,8 @@ public class AddProfilePictureFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            imageViewProfilePic = (ImageView) getActivity().findViewById(R.id.imageViewProfilePictureAccountScreen);
+            profilePicUpdatedReceiver = new ProfilePicUpdatedReceiver();
+            imageViewProfilePic = getActivity().findViewById(R.id.imageViewAddProfilePictureAccountScreen);
 
             //From file button tapped
             getActivity().findViewById(R.id.buttonFromFileAddProfilePicScreen).setOnClickListener(new View.OnClickListener() {
@@ -92,6 +101,22 @@ public class AddProfilePictureFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (getContext() != null) {
+            getContext().registerReceiver(profilePicUpdatedReceiver, new IntentFilter(StorageUtility.ACTION_PROFILE_PIC_UPDATED));
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (getContext() != null) {
+            getContext().unregisterReceiver(profilePicUpdatedReceiver);
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -99,13 +124,26 @@ public class AddProfilePictureFragment extends Fragment {
 
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             Uri image = data.getData();
-            if (image != null && user != null) {
-                boolean success = StorageUtility.updateProfileImage(image, getContext(), imageViewProfilePic, 2);
-                if (success) {
-                    navigateToMainScreenListener.navigateToMainScreen();
+            if (getActivity() != null && image != null && user != null) {
+                InputStream inputStream = null;
+                try {
+                    inputStream = getActivity().getContentResolver().openInputStream(image);
+                    imageViewProfilePic.setImageBitmap(BitmapFactory.decodeStream(inputStream));
+                    StorageUtility.updateProfileImage(image, getContext());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 }
             }
+        }
+    }
 
+    private class ProfilePicUpdatedReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction() != null && intent.getAction().equals(StorageUtility.ACTION_PROFILE_PIC_UPDATED)) {
+                Log.d(TAG, "onReceive: update");
+                navigateToMainScreenListener.navigateToMainScreen();
+            }
         }
     }
 }

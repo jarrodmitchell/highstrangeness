@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageViewProfilePictureAccountScreen"
+            android:id="@+id/imageViewAddProfilePictureAccountScreen"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:contentDescription="@string/content_description_user_image"

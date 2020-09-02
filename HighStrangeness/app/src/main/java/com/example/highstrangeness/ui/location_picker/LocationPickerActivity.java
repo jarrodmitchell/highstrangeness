@@ -21,7 +21,7 @@ import com.example.highstrangeness.utilities.LocationUtility;
 
 import java.util.Objects;
 
-public class LocationPickerActivity extends AppCompatActivity implements LocationUtility.GetAddressAsyncTask.ReturnAddressListener {
+public class LocationPickerActivity extends AppCompatActivity implements LocationUtility.ReturnAddressListener {
 
     public static final String TAG = "LocationPickerActivity";
 

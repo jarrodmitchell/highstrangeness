@@ -1,6 +1,7 @@
 package com.example.highstrangeness.utilities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
@@ -9,8 +10,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.highstrangeness.ui.post.PostPt2Fragment;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
@@ -24,20 +28,18 @@ import java.util.List;
 
 public class StorageUtility {
     public static final String TAG = "StorageUtility";
+    public static final String ACTION_PROFILE_PIC_UPDATED = "ACTION_PROFILE_PIC_UPDATED";
 
     public interface GetPostImageNamesListener {
         void getPostImagesName(List<String> imageNames);
     }
 
-    public static boolean success;
-
-    private static FirebaseStorage storage = FirebaseStorage.getInstance();
     private static StorageMetadata metadata = new StorageMetadata.Builder()
             .setContentType("image/png")
             .build();
 
     public static void updatePostImages(final Uri uri, String postId, final Context context) {
-        StorageReference storageReference = storage.getReference();
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference imageReference = storageReference.child("images");
         StorageReference postImagesReference = imageReference.child("posts");
         StorageReference postImageReference = postImagesReference.child(postId);
@@ -47,7 +49,6 @@ public class StorageUtility {
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                success = true;
                 Log.d(TAG, "onSuccess: adding post image");
                 Toast.makeText(context, "Image \"" + uri.getLastPathSegment() +  "\" was successfully uploaded", Toast.LENGTH_SHORT).show();
             }
@@ -60,38 +61,9 @@ public class StorageUtility {
         });
     }
 
-    public static boolean updateProfileImage(Uri uri, final Context context, final ImageView imageView, final int size) {
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            StorageReference storageReference = storage.getReference();
-            StorageReference imageReference = storageReference.child("images");
-            StorageReference profileImagesReference = imageReference.child("profileImages");
-            StorageReference userImageReference = profileImagesReference.child(user.getUid());
-            StorageReference image = userImageReference.child(user.getUid() + ".png");
-
-            UploadTask uploadTask = image.putFile(uri, metadata);
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(context, "Profile Picture Added", Toast.LENGTH_SHORT).show();
-                    setProfileImage(user.getUid(), size, imageView);
-                    success = true;
-                    Log.d(TAG, "onSuccess: ");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "onFailure: ");
-                    Toast.makeText(context, "Error Adding Image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        return success;
-    }
-
     public static void getListOfPostImages(String postId, Context context) {
         final GetPostImageNamesListener getPostImageNamesListener = (GetPostImageNamesListener) context;
-        StorageReference storageReference = storage.getReference();
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference imagesReference = storageReference.child("images");
         StorageReference postsReference = imagesReference.child("posts");
         StorageReference listReference = postsReference.child(postId);
@@ -112,6 +84,7 @@ public class StorageUtility {
                                 Log.d(TAG, "onSuccess: split  " + splitName[0] );
                                 imageNames.add(splitName[0]);
                             }
+                            Log.d(TAG, "onSuccess: getpostimagelistener send");
                             getPostImageNamesListener.getPostImagesName(imageNames);
                         }
                     }
@@ -124,8 +97,36 @@ public class StorageUtility {
                 });
     }
 
-    public static void setProfileImage(String id, int size, final ImageView imageView) {
-        StorageReference storageReference = storage.getReference();
+    public static void updateProfileImage(Uri uri, final Context context) {
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+            StorageReference imageReference = storageReference.child("images");
+            StorageReference profileImagesReference = imageReference.child("profileImages");
+            StorageReference userImageReference = profileImagesReference.child(user.getUid());
+            StorageReference image = userImageReference.child(user.getUid() + ".png");
+
+            UploadTask uploadTask = image.putFile(uri, metadata);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(context, "Profile Picture Added", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(ACTION_PROFILE_PIC_UPDATED);
+                    context.sendBroadcast(intent);
+                    Log.d(TAG, "onSuccess: ");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "onFailure: ");
+                    Toast.makeText(context, "Error Adding Image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    public static void setProfileImage(Context context, String id, int size, final ImageView imageView) {
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference imageReference = storageReference.child("images");
         StorageReference profileImagesReference = imageReference.child("profileImages");
         StorageReference userImageReference = profileImagesReference.child(id);
@@ -134,7 +135,7 @@ public class StorageUtility {
     }
 
     public static void setPostImage(String name, String id, int size, final ImageView imageView) {
-        StorageReference storageReference = storage.getReference();
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference imageReference = storageReference.child("images");
         StorageReference postsReference = imageReference.child("posts");
         StorageReference postImagesReference = postsReference.child(id);
@@ -143,6 +144,8 @@ public class StorageUtility {
     }
 
     public static void setImageToImageView(String id, int size, final ImageView imageView, StorageReference reference) {
+        Log.d(TAG, "setImageToImageView: id = " + id);
+        Log.d(TAG, "setImageToImageView: ref = " + reference.toString());
 
         StringBuilder ref = new StringBuilder(id);
         switch (size) {
@@ -158,12 +161,105 @@ public class StorageUtility {
         }
         ref.append(".png");
 
+        Log.d(TAG, "setImageToImageView: ref = " + ref);
+
         final long mb = 1024 * 1024;
         reference.child(ref.toString()).getBytes(mb).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 imageView.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                 Log.d(TAG, "onSuccess: set image");
+            }
+        });
+    }
+
+    public static void deletePostImages(final Context context, String id) {
+        Log.d(TAG, "deletePostImages: in");
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference imageReference = storageReference.child("images");
+        StorageReference postsReference = imageReference.child("posts");
+        StorageReference postImagesReference = postsReference.child(id);
+        Log.d(TAG, "deletePostImages: id = " + id);
+        Log.d(TAG, "setImageToImageView: ref = " + postImagesReference.toString());
+            postImagesReference.listAll().addOnCompleteListener(new OnCompleteListener<ListResult>() {
+                @Override
+                public void onComplete(@NonNull Task<ListResult> task) {
+                    Log.d(TAG, "onComplete: list got");
+                    if  (task.getResult() != null) {
+                        Log.d(TAG, "onComplete: list result here");
+                        final Intent intent = new Intent(PostUtility.ACTION_SEND_ALERT_POST_DELETED);
+                        final int max = task.getResult().getItems().size();
+                        Log.d(TAG, "onComplete: size =  " + max);
+                        for (int i = 0; i < max; i++) {
+                            final int index = i;
+                            StorageReference reference = task.getResult().getItems().get(i);
+                            Log.d(TAG, "onComplete: ref = " + reference.toString());
+                            reference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "onComplete: Success deleting images");
+                                        if (index + 1 == max) {
+                                            context.sendBroadcast(intent);
+                                        }
+                                    }else {
+                                        if (task.getException() != null) {
+                                            Log.d(TAG, "onComplete: " + task.getException().getMessage());
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+    }
+
+    public static void deleteImage(final Context context, final String id, final String imageName) {
+
+        Log.d(TAG, "deletePostImages: in");
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference imageReference = storageReference.child("images");
+        StorageReference postsReference = imageReference.child("posts");
+        StorageReference postImagesReference = postsReference.child(id);
+        Log.d(TAG, "deletePostImages: id = " + id);
+        Log.d(TAG, "setImageToImageView: ref = " + postImagesReference.toString());
+        postImagesReference.listAll().addOnCompleteListener(new OnCompleteListener<ListResult>() {
+            @Override
+            public void onComplete(@NonNull Task<ListResult> task) {
+                Log.d(TAG, "onComplete: list got");
+                if  (task.getResult() != null) {
+                    Log.d(TAG, "onComplete: list result here");
+                    final Intent intent = new Intent(PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW_OLD_POST);
+                    final int max = task.getResult().getItems().size();
+                    Log.d(TAG, "onComplete: size =  " + max);
+
+                    for (int i = 0; i < max; i++) {
+                        final int index = i;
+                        StorageReference reference = task.getResult().getItems().get(i);
+                        String  name = reference.getName();
+                        if (name.contains(imageName)) {
+                            Log.d(TAG, "onComplete: ref = " + reference.toString());
+                            reference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "onComplete: Success deleting images");
+                                        if (index + 1 == max) {
+                                            Toast.makeText(context, imageName + " deleted", Toast.LENGTH_SHORT).show();
+                                            context.sendBroadcast(intent);
+                                        }
+                                    }else {
+                                        if (task.getException() != null) {
+                                            Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            Log.d(TAG, "onComplete: " + task.getException().getMessage());
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
             }
         });
     }

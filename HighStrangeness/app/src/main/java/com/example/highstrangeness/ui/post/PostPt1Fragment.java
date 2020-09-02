@@ -16,7 +16,9 @@ import android.widget.TextView;
 
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.objects.NewPost;
+import com.example.highstrangeness.objects.Post;
 import com.example.highstrangeness.utilities.FormValidationUtility;
+import com.example.highstrangeness.utilities.LocationUtility;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -30,6 +32,7 @@ import java.util.Date;
 public class PostPt1Fragment extends Fragment {
 
     public static final String TAG = "PostPt1Fragment";
+    public static final String EXTRA_POST = "EXTRA_POST";
 
     public interface DisplayPostPart2Listener {
         void displayPostPart2();
@@ -52,9 +55,10 @@ public class PostPt1Fragment extends Fragment {
     }
 
     public interface SetNewPostListener {
-        void setNewPost(NewPost newPost);
+        void setNewPostValues(NewPost newPost);
     }
 
+    private LocationUtility.ReturnAddressListener returnAddressListener;
     private DisplayPostPart2Listener displayPostPart2Listener;
     private DisplayCalenderPickerListener displayCalenderPickerListener;
     private DisplayLocationPickerListener displayLocationPickerListener;
@@ -66,9 +70,10 @@ public class PostPt1Fragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static PostPt1Fragment newInstance(String param1, String param2) {
+    public static PostPt1Fragment newInstance(Post post) {
         PostPt1Fragment fragment = new PostPt1Fragment();
         Bundle args = new Bundle();
+        args.putParcelable(EXTRA_POST, post);
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,6 +86,7 @@ public class PostPt1Fragment extends Fragment {
     TextView textViewLocation;
     EditText editTextDescription;
     Button buttonNext;
+    Post post;
 
 
     @Override
@@ -95,6 +101,7 @@ public class PostPt1Fragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         if (getActivity() != null) {
+            returnAddressListener = (LocationUtility.ReturnAddressListener) getActivity();
             displayPostPart2Listener = (DisplayPostPart2Listener) getActivity();
             displayCalenderPickerListener = (DisplayCalenderPickerListener) getActivity();
             displayLocationPickerListener = (DisplayLocationPickerListener) getActivity();
@@ -161,14 +168,19 @@ public class PostPt1Fragment extends Fragment {
                     FormValidationUtility.validateDescription(description, editTextDescription) &&
                     FormValidationUtility.validateDate(textViewDate.getText().toString(), textViewDate) &&
                     FormValidationUtility.validateLocation(textViewLocation.getText().toString(), textViewLocation)) {
-                        setNewPostListener.setNewPost(new NewPost(title, switchFirstHand.isChecked(), getDateListener.getDate(),
+                        setNewPostListener.setNewPostValues(new NewPost(title, switchFirstHand.isChecked(), getDateListener.getDate(),
                                 getLatLng.getLatLng().latitude, getLatLng.getLatLng().longitude, description));
                         displayPostPart2Listener.displayPostPart2();
-                    }else {
-                        setNewPostListener.setNewPost(null);
                     }
                 }
             });
+
+            if (getArguments() != null && getArguments().getParcelable(EXTRA_POST) != null) {
+                post = getArguments().getParcelable(EXTRA_POST);
+                if (post != null) {
+                    LocationUtility.getAddress(getContext(), new LatLng(post.getLatitude(), post.getLongitude()), returnAddressListener);
+                }
+            }
         }
     }
 }

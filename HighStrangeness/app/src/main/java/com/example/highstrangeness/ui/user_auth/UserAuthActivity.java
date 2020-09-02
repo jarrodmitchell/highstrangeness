@@ -99,7 +99,9 @@ public class UserAuthActivity extends AppCompatActivity implements
 
     private void checkPermissions() {
         requestCode += 1;
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.INTERNET)
                         != PackageManager.PERMISSION_GRANTED ||
@@ -108,15 +110,19 @@ public class UserAuthActivity extends AppCompatActivity implements
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "checkPermissions: request");
             ActivityCompat.requestPermissions(this,
                     new String[]{
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             android.Manifest.permission.READ_EXTERNAL_STORAGE,
                             android.Manifest.permission.INTERNET,
                             Manifest.permission.ACCESS_NETWORK_STATE,
                             Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION},
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.CAMERA},
                     requestCode);
         }
     }

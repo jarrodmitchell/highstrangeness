@@ -114,10 +114,6 @@ public class Post implements Parcelable {
         return contentTypes;
     }
 
-    public void setContentTypes(ArrayList<String> contentTypes) {
-        this.contentTypes = contentTypes;
-    }
-
     public Post(String id, String userId, String title, boolean firstHand, Date date, double latitude, double longitude, String description, ArrayList<String> tags, ArrayList<String> contentTypes) {
         this.id = id;
         this.userId = userId;

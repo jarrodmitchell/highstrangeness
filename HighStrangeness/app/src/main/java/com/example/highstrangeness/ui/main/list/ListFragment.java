@@ -103,12 +103,12 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onPause() {
         super.onPause();
+        context.unregisterReceiver(updatedListReceiver);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        context.unregisterReceiver(updatedListReceiver);
     }
 
     @Override
@@ -131,7 +131,8 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() != null && intent.getAction().equals(MainActivity.ACTION_LIST_UPDATED)) {
                 Log.d(TAG, "onReceive: update");
-                buttonNewPosts.setVisibility(View.VISIBLE);
+//                buttonNewPosts.setVisibility(View.VISIBLE);
+                setRecycleView();
             }
         }
     }

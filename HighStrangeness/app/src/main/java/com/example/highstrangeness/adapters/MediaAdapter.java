@@ -5,15 +5,12 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.highstrangeness.R;
-import com.example.highstrangeness.ui.main.MainActivity;
 import com.example.highstrangeness.ui.post_detail.PostDetailActivity;
 import com.example.highstrangeness.ui.post_detail.image_viewer.ImageViewerActivity;
 import com.example.highstrangeness.utilities.StorageUtility;
@@ -52,7 +49,6 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaAdapter
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, ImageViewerActivity.class);
-                    String mime = "*/*";
                     intent.putExtra(PostDetailActivity.EXTRA_IMAGE_NAME, postImageNames.get(position));
                     intent.putExtra(PostDetailActivity.EXTRA_POST_ID, id);
                     context.startActivity(intent);

@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -34,6 +35,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,7 +70,7 @@ public class EditAccountActivity extends AppCompatActivity {
         buttonEditEmail = findViewById(R.id.buttonEditEmail);
         buttonEditPassword = findViewById(R.id.buttonEditPassword);
 
-        StorageUtility.setProfileImage(User.currentUser.getId(), 2, imageViewProfilePic);
+        StorageUtility.setProfileImage(this, User.currentUser.getId(), 2, imageViewProfilePic);
         if (user != null) {
             editTextEmail.setText(user.getEmail());
             editTextUsername.setText(user.getDisplayName());
@@ -365,13 +368,27 @@ public class EditAccountActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_FILE_PICKER && data != null) {
+            Log.d(TAG, "onActivityResult: update image");
 
             Uri image = data.getData();
             if (image != null) {
                 Log.d(TAG, "onActivityResult: image = " + image.getLastPathSegment());
-                StorageUtility.updateProfileImage(image, this, imageViewProfilePic, 2);
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(image);
+                    imageViewProfilePic.setImageBitmap(BitmapFactory.decodeStream(inputStream));
+                    StorageUtility.updateProfileImage(image, this);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
 
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

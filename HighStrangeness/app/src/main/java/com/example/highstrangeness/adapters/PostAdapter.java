@@ -29,6 +29,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public static final String TAG = "PostAdapter";
 
     private LayoutInflater layoutInflater;
+    Context context;
     private static List<Post> posts;
     private static ListFragment.OnItemClickListener mOnItemClickListener = null;
     private static FilteredPostListFragment.FilteredOnItemClickListener onFilteredItemClickListener = null;
@@ -36,6 +37,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public PostAdapter(Context context, List<Post> posts, ListFragment.OnItemClickListener onItemClickListener,
                        FilteredPostListFragment.FilteredOnItemClickListener filteredOnItemClickListener) {
         this.layoutInflater = LayoutInflater.from(context);
+        this.context = context;
         PostAdapter.posts = posts;
         mOnItemClickListener = onItemClickListener;
         onFilteredItemClickListener = filteredOnItemClickListener;
@@ -88,7 +90,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @Override
     public void onBindViewHolder(@NonNull final PostViewHolder holder, int position) {
         if (posts.size() > position) {
-            StorageUtility.setProfileImage(posts.get(position).getUserId(), 0, holder.imageViewUserPic);
+            StorageUtility.setProfileImage(context, posts.get(position).getUserId(), 0, holder.imageViewUserPic);
 
             StringBuilder stringBuilder = new StringBuilder();
             Log.d(TAG, "onBindViewHolder: username" + posts.get(position).getUsername());

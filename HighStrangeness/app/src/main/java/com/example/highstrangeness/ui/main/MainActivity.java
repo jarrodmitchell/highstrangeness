@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +30,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,48 +62,50 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
 
     @Override
     public void setPostListener(List<Post> posts) {
-        boolean shouldUpdateList = shouldUpdateList(postList, posts);
-        if (shouldUpdateList) {
-            postList = posts;
-            Intent intent = new Intent(ACTION_LIST_UPDATED);
-            Log.d(TAG, "setPostListener: send");
-            sendBroadcast(intent);
-        }
+        postList = posts;
+        Intent intent = new Intent(ACTION_LIST_UPDATED);
+        Log.d(TAG, "setPostListener: send");
+        sendBroadcast(intent);
+//
+//        for (Post post: posts) {
+//            Log.d(TAG, "setPostListener: post1: " + post.getId());
+//        }
+//        for (Post post: postList) {
+//            Log.d(TAG, "setPostListener: post2: " + post.getId());
+//        }
+//
+//        boolean shouldUpdateList = shouldUpdateList(postList, posts);
+//        if (shouldUpdateList) {
+//        }
     }
-
-    private boolean shouldUpdateList(List<Post> postList1, List<Post> postList2) {
-        boolean bool = false;
-
-        //if current list is empty, update it to the new list
-        if (postList1.size() == 0 && postList2.size() > postList1.size()) {
-            return true;
-        }
-
-        int max = postList2.size();
-
-        if (postList1.size() > postList2.size()) {
-            max = postList1.size();
-        }
-
-        //check whether all values in each list are the same
-        for (int i = 0; i < postList1.size() && i < postList2.size(); i++) {
-            //if they are, don't update the list
-            Log.d(TAG, "shouldUpdateList: list 1 " + postList1.get(i));
-            Log.d(TAG, "shouldUpdateList: list 2 " + postList2.get(i));
-            if (postList1.get(i).getId().equals(postList2.get(i).getId()) && i == max-1) {
-                return false;
-            }else if(!postList1.get(i).getId().equals(postList2.get(i).getId())) {
-                return true;
-            }
-            //if they aren't, update the list
-            bool = true;
-        }
-        return bool;
-    }
+//
+//    private boolean shouldUpdateList(List<Post> postList1, List<Post> postList2) {
+//        //if current list is empty, update it to the new list
+//        if (postList2.size() > postList1.size() || postList2.size() < postList1.size()) {
+//            Log.d(TAG, "shouldUpdateList: list 1 count: " + postList1.size());
+//            Log.d(TAG, "shouldUpdateList: list 2 count: " + postList2.size());
+//            Log.d(TAG, "shouldUpdateList: how");
+//            return true;
+//        }
+//
+//        int max = postList2.size();
+//
+//        //check whether all values in each list are the same
+//        for (int i = 0; i < max; i++) {
+//            Log.d(TAG, "shouldUpdateList: list 1 count: " + postList1.size() + " " + postList1.get(i).getId());
+//            Log.d(TAG, "shouldUpdateList: list 2 count: " + postList2.size() + " " + postList2.get(i).getId());
+//            if (!postList1.get(i).getId().equals(postList2.get(i).getId())) {
+//                Log.d(TAG, "shouldUpdateList: true max");
+//                return true;
+//            }
+//        }
+//        //if they are, don't update the list
+//        return false;
+//    }
 
 
     FloatingActionButton fab;
-    List<Post> postList = new ArrayList<>();
+    List<Post> postList;
     BottomNavigationView navView;
     ListFragment listFragment = new ListFragment();
     MapFragment mapFragment = new MapFragment();
@@ -112,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        postList = new ArrayList<>();
         setTitle("");
 
         fab = findViewById(R.id.fabAddPost);
@@ -194,18 +197,24 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == REQUEST_CODE_ACCOUNT_SCREEN) {
-            FirebaseAuth.getInstance().signOut();
-            User.currentUser = null;
-            setResult(UserAuthActivity.REQUEST_CODE_LOGGED_OUT);
-            finish();
+        Log.d(TAG, "onActivityResult: result");
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CODE_ACCOUNT_SCREEN) {
+                FirebaseAuth.getInstance().signOut();
+                User.currentUser = null;
+                setResult(UserAuthActivity.REQUEST_CODE_LOGGED_OUT);
+                finish();
+            }
         }
     }
 
     @Override
     public void onBackPressed()
     {
-        finish();
-        moveTaskToBack(true);
+        if (mapFragment.isVisible()) {
+            finish();
+            moveTaskToBack(true);
+        }
+        navView.setSelectedItemId(R.id.navigation_map);
     }
 }

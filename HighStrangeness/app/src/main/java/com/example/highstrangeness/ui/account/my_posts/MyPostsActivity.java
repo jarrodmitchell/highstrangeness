@@ -23,7 +23,7 @@ public class MyPostsActivity extends AppCompatActivity implements FilteredPostLi
     public void onClick(Post post) {
         Intent intent = new Intent(MyPostsActivity.this, PostDetailActivity.class);
         intent.putExtra(EXTRA_POST, post);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     @Override

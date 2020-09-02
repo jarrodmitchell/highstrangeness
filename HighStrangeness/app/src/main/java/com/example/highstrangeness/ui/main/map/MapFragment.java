@@ -85,7 +85,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     markerInfoView.setPadding(24, 24, 24, 24);
                     markerInfoView.setBackground(ContextCompat.getDrawable(context, R.drawable.info_view_back));
 
-                    StorageUtility.setProfileImage(post.getUserId(), 0, imageViewUserPic);
+                    StorageUtility.setProfileImage(getActivity(), post.getUserId(), 0, imageViewUserPic);
                     imageViewUserPic.setImageResource(R.drawable.user);
 
                     StringBuilder stringBuilder = new StringBuilder();
@@ -245,8 +245,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void addMarkersForPosts() {
+        Log.d(TAG, "addMarkersForPosts: ");
         List<Post> posts = getPostsListener.getPosts();
         if (posts != null && posts.size() > 0) {
+            map.clear();
             for (Post post: posts) {
                 setMarker(new LatLng(post.getLatitude(), post.getLongitude()), post);
             }

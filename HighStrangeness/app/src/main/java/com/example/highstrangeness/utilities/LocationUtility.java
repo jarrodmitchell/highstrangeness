@@ -17,50 +17,29 @@ public class LocationUtility {
 
     public static final String TAG = "LocationUtility";
 
+    public interface ReturnAddressListener {
+        void returnAddress(final Address address);
+    }
 
-    public static class GetAddressAsyncTask extends AsyncTask<LatLng, Void, Address> {
-        private WeakReference<Context> contextWeakReference;
+    public static void getAddress(Context context, LatLng latLng, ReturnAddressListener returnAddressListener) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            if (latLng != null) {
+                List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 20);
+                if (addressList.size() > 0) {
+                    Address address = addressList.get(0);
+                    Log.d(TAG, "onMapClick: " + address.toString());
 
-        public GetAddressAsyncTask(final Context context) {
-            contextWeakReference = new WeakReference<>(context);
-            returnAddressListener = (ReturnAddressListener) contextWeakReference.get();
-        }
-
-        public interface ReturnAddressListener {
-            void returnAddress(final Address address);
-        }
-
-        ReturnAddressListener returnAddressListener;
-
-        @Override
-        protected Address doInBackground(LatLng... latLngs) {
-            LatLng latLng = latLngs[0];
-
-            Geocoder geocoder = new Geocoder(contextWeakReference.get(), Locale.getDefault());
-            try {
-                if (latLng != null) {
-                    List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 20);
-                    if (addressList.size() > 0) {
-                        Address address = addressList.get(0);
-                        Log.d(TAG, "onMapClick: " + address.toString());
-                        return address;
-                    }else {
-                        Log.d(TAG, "onMapLongClick: no address");
-                    }
+                    returnAddressListener.returnAddress(address);
                 }else {
-                    Log.d(TAG, "onMapLongClick: no latlng");
+                    Log.d(TAG, "onMapLongClick: no address");
                 }
-
-            } catch (IOException e) {
-                e.printStackTrace();
+            }else {
+                Log.d(TAG, "onMapLongClick: no latlng");
             }
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(Address address) {
-            super.onPostExecute(address);
-            returnAddressListener.returnAddress(address);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

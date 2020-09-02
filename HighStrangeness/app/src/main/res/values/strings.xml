@@ -63,4 +63,5 @@
     <string name="delete">Delete</string>
     <string name="flag">Flag</string>
     <string name="bookmark">Bookmark</string>
+    <string name="edit_text">Edit Text</string>
 </resources>
