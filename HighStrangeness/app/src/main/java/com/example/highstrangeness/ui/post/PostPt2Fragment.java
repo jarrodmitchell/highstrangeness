@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -35,6 +36,16 @@ import com.example.highstrangeness.objects.NewPost;
 import com.example.highstrangeness.objects.Post;
 import com.example.highstrangeness.ui.main.MainActivity;
 import com.example.highstrangeness.utilities.StorageUtility;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.common.collect.Lists;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.model.Document;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -43,7 +54,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -185,10 +198,37 @@ public class PostPt2Fragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     String[] tags = editTextTags.getText().toString().trim().split(",");
+                    Log.d(TAG, "onClick: tag " + tags[0].length());
+                    final String[] trimmedTags = trimTags(tags);
+
+                    //add tags to db
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    final DocumentReference documentReference = db.collection("tags").document("tags");
+                    documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+
+                                ArrayList<String> tags1 = (ArrayList<String>) task.getResult().getData().get("tags");
+                                if (tags1 != null) {
+                                    for (String tag : trimmedTags) {
+                                        if (!tags1.contains(tag)) {
+                                            tags1.add(tag);
+                                        }
+                                    }
+                                    final Map<String, Object> docData = new HashMap<>();
+                                    docData.put("tags", Lists.newArrayList(tags1));
+                                    documentReference.set(docData);
+                                }
+                            }
+                        }
+                    });
+
+                    Log.d(TAG, "onClick: tag " + tags[0].length());
                     if (getOldPostListener.getPostListener() != null)  {
-                        addPostToFirebase.addPostToFirebase(tags, getOldPostListener.getPostListener().getId(), imageNameList);
+                        addPostToFirebase.addPostToFirebase(trimmedTags, getOldPostListener.getPostListener().getId(), imageNameList);
                     }else{
-                        addPostToFirebase.addPostToFirebase(tags, null, null);
+                        addPostToFirebase.addPostToFirebase(trimmedTags, null, null);
                     }
                 }
             });
@@ -299,6 +339,13 @@ public class PostPt2Fragment extends Fragment {
                 updateMainRecycleView(newPost.getImageUris(), recyclerViewImages, "images");
             }
         }
+    }
+
+    private String[] trimTags(String[] tags) {
+        for (int i = 0; i < tags.length; i++) {
+            tags[i] = tags[i].toLowerCase().trim();
+        }
+        return tags;
     }
 
      class UpdateRecycleViewReceiver extends BroadcastReceiver {

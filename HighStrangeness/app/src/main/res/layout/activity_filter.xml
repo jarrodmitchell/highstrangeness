@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.filter.FilterActivity">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".ui.post.PostPt1Fragment">
+
+            <TextView
+                android:id="@+id/textViewSpinnerTitle"
+                style="@style/TextViewTitleEncounter"
+                android:layout_margin="32dp"
+                android:textColor="@color/colorPrimaryDark"
+
+                android:text="@string/filter_by_tag"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/spinnerTag"
+                style="@style/EditTextAddPost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="32dp"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewSpinnerTitle"/>
+
+
+            <TextView
+                android:id="@+id/textViewTimeRangeLabel"
+                style="@style/TextViewTitleEncounter"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:textColor="@color/colorPrimaryDark"
+
+                android:text="@string/filter_by_time_range"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/spinnerTag"/>
+
+
+
+            <TextView
+                android:id="@+id/textViewStartDateLabel"
+                style="@style/TextViewTitleEncounter"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/colorPrimaryDark"
+
+                android:text="@string/start_date"
+                android:textSize="13sp"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewTimeRangeLabel" />
+
+            <TextView
+                android:id="@+id/textViewStartDateFormat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/gray"
+                style="@style/TextViewTitleEncounter.Light"
+
+                android:text="@string/mm_dd_yyyy"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewStartDateLabel" />
+
+            <Button
+                android:id="@+id/buttonPickStartDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                style="@style/ButtonMinor"
+
+                android:text="@string/pick_date"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewStartDateFormat"/>
+
+
+
+            <TextView
+                android:id="@+id/textViewEndDateLabel"
+                style="@style/TextViewTitleEncounter"
+                android:layout_marginStart="32dp"
+                android:textColor="@color/colorPrimaryDark"
+
+                android:text="@string/end_date"
+                android:textSize="13sp"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/buttonPickStartDate" />
+
+            <TextView
+                android:id="@+id/textViewEndDateFormat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/gray"
+                style="@style/TextViewTitleEncounter.Light"
+
+                android:text="@string/mm_dd_yyyy"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewEndDateLabel" />
+
+            <Button
+                android:id="@+id/buttonPickEndDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                style="@style/ButtonMinor"
+
+                android:text="@string/pick_date"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewEndDateFormat"/>
+
+
+
+            <TextView
+                android:id="@+id/textViewEvidenceLabel"
+                style="@style/TextViewTitleEncounter"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:textColor="@color/colorPrimaryDark"
+
+                android:text="@string/filter_by_evidence"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/buttonPickEndDate" />
+
+            <CheckBox
+                android:id="@+id/checkboxImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/image"
+                android:textDirection="rtl"
+                style="@style/TextViewTitleEncounter.Light"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewEvidenceLabel"/>
+
+            <CheckBox
+                android:id="@+id/checkboxAudio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/audio"
+                android:textDirection="rtl"
+                style="@style/TextViewTitleEncounter.Light"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/checkboxImage"/>
+
+            <CheckBox
+                android:id="@+id/checkboxVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/video"
+                android:textDirection="rtl"
+                style="@style/TextViewTitleEncounter.Light"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/checkboxAudio"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

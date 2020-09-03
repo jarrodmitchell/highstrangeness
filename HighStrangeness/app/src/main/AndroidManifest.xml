@@ -23,7 +23,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.post_detail.video_viewer.VideoViewerActivity"></activity>
+        <activity android:name=".ui.main.filter.FilterActivity"></activity>
+        <activity android:name=".ui.post_detail.video_viewer.VideoViewerActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

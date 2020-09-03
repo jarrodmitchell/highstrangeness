@@ -164,7 +164,7 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
     private void returnPost(Intent intent) {
         Log.d(TAG, "returnPost: ");
         Intent resultIntent = new Intent();
-        resultIntent.putExtra(MainActivity.EXTRA_POST, intent.getParcelableExtra(MainActivity.EXTRA_POST));
+        resultIntent.putExtra(MainActivity.EXTRA_POST, (Post) intent.getParcelableExtra(MainActivity.EXTRA_POST));
         setResult(RESULT_OK, resultIntent);
         finish();
     }

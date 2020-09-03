@@ -65,4 +65,13 @@
     <string name="bookmark">Bookmark</string>
     <string name="edit_text">Edit Text</string>
     <string name="edit_post">Edit Post</string>
+    <string name="filter_by_tag">Filter by Tag</string>
+    <string name="filter_by_time_range">Filter by Time Range</string>
+    <string name="filter_by_evidence">Filter by Evidence</string>
+    <string name="video">Video</string>
+    <string name="audio">Audio</string>
+    <string name="image">Image</string>
+    <string name="menu_clear">Clear</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
 </resources>

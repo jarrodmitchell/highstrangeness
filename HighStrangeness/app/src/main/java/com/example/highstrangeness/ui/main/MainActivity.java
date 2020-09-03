@@ -15,9 +15,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.highstrangeness.R;
+import com.example.highstrangeness.objects.Filter;
 import com.example.highstrangeness.objects.Post;
 import com.example.highstrangeness.objects.User;
 import com.example.highstrangeness.ui.account.AccountActivity;
+import com.example.highstrangeness.ui.main.filter.FilterActivity;
 import com.example.highstrangeness.ui.main.list.ListFragment;
 import com.example.highstrangeness.ui.main.map.MapFragment;
 import com.example.highstrangeness.ui.main.media_capture.MediaCaptureFragment;
@@ -34,6 +36,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements PostUtility.SetPostListListener,
         ListFragment.GetPostsListener, ListFragment.OnItemClickListener, MapFragment.GetPostsListener,
@@ -62,46 +66,39 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
 
     @Override
     public void setPostListener(List<Post> posts) {
-        postList = posts;
+        if (Filter.filter != null) {
+            postList = posts.stream().filter(new Predicate<Post>() {
+                @Override
+                public boolean test(Post post) {
+                    if (Filter.filter.getTag() != null && !post.getTags().contains(Filter.filter.getTag())) {
+                        return false;
+                    }
+                    if (Filter.filter.getStartDate() != null && post.getDate().getTime() < Filter.filter.getStartDate().getTime()) {
+                        return false;
+                    }
+                    if (Filter.filter.getEndDate() != null && post.getDate().getTime() > Filter.filter.getEndDate().getTime()) {
+                        return false;
+                    }
+                    if (Filter.filter.isHasImages() && !post.getContentTypes().contains("Image")) {
+                        return false;
+                    }
+                    if (Filter.filter.isHasAudio() && !post.getContentTypes().contains("Audio")) {
+                        return false;
+                    }
+                    if (Filter.filter.isHasVideo() && !post.getContentTypes().contains("Video")) {
+                        return false;
+                    }
+
+                    return true;
+                }
+            }).collect(Collectors.toCollection(ArrayList<Post>::new));
+        }else {
+            postList = posts;
+        }
         Intent intent = new Intent(ACTION_LIST_UPDATED);
         Log.d(TAG, "setPostListener: send");
         sendBroadcast(intent);
-//
-//        for (Post post: posts) {
-//            Log.d(TAG, "setPostListener: post1: " + post.getId());
-//        }
-//        for (Post post: postList) {
-//            Log.d(TAG, "setPostListener: post2: " + post.getId());
-//        }
-//
-//        boolean shouldUpdateList = shouldUpdateList(postList, posts);
-//        if (shouldUpdateList) {
-//        }
     }
-//
-//    private boolean shouldUpdateList(List<Post> postList1, List<Post> postList2) {
-//        //if current list is empty, update it to the new list
-//        if (postList2.size() > postList1.size() || postList2.size() < postList1.size()) {
-//            Log.d(TAG, "shouldUpdateList: list 1 count: " + postList1.size());
-//            Log.d(TAG, "shouldUpdateList: list 2 count: " + postList2.size());
-//            Log.d(TAG, "shouldUpdateList: how");
-//            return true;
-//        }
-//
-//        int max = postList2.size();
-//
-//        //check whether all values in each list are the same
-//        for (int i = 0; i < max; i++) {
-//            Log.d(TAG, "shouldUpdateList: list 1 count: " + postList1.size() + " " + postList1.get(i).getId());
-//            Log.d(TAG, "shouldUpdateList: list 2 count: " + postList2.size() + " " + postList2.get(i).getId());
-//            if (!postList1.get(i).getId().equals(postList2.get(i).getId())) {
-//                Log.d(TAG, "shouldUpdateList: true max");
-//                return true;
-//            }
-//        }
-//        //if they are, don't update the list
-//        return false;
-//    }
 
 
     FloatingActionButton fab;
@@ -175,6 +172,9 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         android.widget.SearchView searchView = (android.widget.SearchView) menu.findItem(R.id.app_bar_search).getActionView();
+        if (Filter.filter != null) {
+
+        }
         searchView.setQueryHint("Search Location...");
         return true;
     }
@@ -183,10 +183,12 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.app_bar_account:
-                Intent intent = new Intent(MainActivity.this, AccountActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_ACCOUNT_SCREEN);
+                Intent intentAccount = new Intent(MainActivity.this, AccountActivity.class);
+                startActivityForResult(intentAccount, REQUEST_CODE_ACCOUNT_SCREEN);
                 break;
             case R.id.app_bar_filter:
+                Intent intentFilter = new Intent(MainActivity.this, FilterActivity.class);
+                startActivity(intentFilter);
                 break;
             case R.id.app_bar_search:
                 break;
