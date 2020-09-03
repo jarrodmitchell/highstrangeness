@@ -79,7 +79,16 @@ public class AccountActivity extends AppCompatActivity {
                 if (uId != null) {
                     intent.putExtra("uid", uId);
                 }
+                intent.putExtra("title", "My Posts");
                 startActivityForResult(intent, REQUEST_CODE_MY_POSTS);
+            }
+        });
+        buttonFavorites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AccountActivity.this, MyPostsActivity.class);
+                intent.putExtra("title", "Favorites");
+                startActivity(intent);
             }
         });
         updateViews();

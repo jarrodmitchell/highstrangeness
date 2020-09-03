@@ -66,7 +66,9 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
 
     @Override
     public void setPostListener(List<Post> posts) {
+        Log.d(TAG, "setPostListener: posts" + posts.size());
         if (Filter.filter != null) {
+            Log.d(TAG, "setPostListener: filter posts");
             postList = posts.stream().filter(new Predicate<Post>() {
                 @Override
                 public boolean test(Post post) {
@@ -93,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
                 }
             }).collect(Collectors.toCollection(ArrayList<Post>::new));
         }else {
+            Log.d(TAG, "setPostListener: Post list = " + postList.size());
+            Log.d(TAG, "setPostListener: posts = " + posts.size());
             postList = posts;
         }
         Intent intent = new Intent(ACTION_LIST_UPDATED);

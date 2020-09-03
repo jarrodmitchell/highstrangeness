@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.common.collect.Lists;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -40,6 +41,7 @@ public class PostUtility {
     public static final String EXTRA_FILTERED_POSTS = "EXTRA_FILTERED_POSTS";
     public static final String ACTION_SEND_ALERT_POST_DELETED = "ACTION_SEND_ALERT_POST_DELETED";
 
+    public static final String FIELD_ID = "id";
     public static final String FIELD_UID = "userId";
     public static final String FIELD_TITLE = "title";
     public static final String FIELD_FIRST_HAND = "firstHandExperience";
@@ -91,6 +93,7 @@ public class PostUtility {
 
             Log.d(TAG, "addPost: in");
             final String id = (postId != null) ? postId : db.collection("posts").document().getId();
+            docData.put(FIELD_ID, id);
             db.collection("posts").document(id)
                     .set(docData)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -159,7 +162,9 @@ public class PostUtility {
                                                     String username = task.getResult().getString("username");
                                                     post.setUsername(username);
                                                     posts.add(post);
-                                                    if (max - 1 == posts.size()) {
+                                                    if (max == posts.size()) {
+                                                        Log.d(TAG, "onComplete: results" + max);
+                                                        Log.d(TAG, "onComplete: posts" + posts.size());
                                                         setPostListListener.setPostListener(posts);
                                                     }
                                                 }
@@ -199,6 +204,41 @@ public class PostUtility {
                         Log.d(TAG, "onComplete: " + task.getException().getMessage());
                     }
                 }
+            }
+        });
+    }
+
+    public static void getBookmarks(final Context context, String uid) {
+        Log.d(TAG, "getMyPosts: get mines");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final DocumentReference documentReference = db.collection("bookmarks")
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                Log.d(TAG, "checkIfPostIsBookmarked: ");
+
+                final ArrayList<String> bookmarks = new ArrayList<>();
+                if (task.isSuccessful() && task.getResult() != null &&
+                        task.getResult().getData() != null) {
+                    Log.d(TAG, "onComplete: success");
+                    bookmarks.addAll((ArrayList<String>) task.getResult().getData().get("bookmarks"));
+                }
+                Log.d(TAG, "onComplete: bookmarks size" + bookmarks.get(0));
+
+                db.collection("posts").whereIn(FIELD_ID, bookmarks).orderBy(FIELD_POST_DATE, Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        Log.d(TAG, "onComplete: complete");
+                        if (task.isSuccessful()) {
+                            parsePosts(context, task);
+                        }else {
+                            if (task.getException() != null) {
+                                Log.d(TAG, "onComplete: " + task.getException().getMessage());
+                            }
+                        }
+                    }
+                });
             }
         });
     }

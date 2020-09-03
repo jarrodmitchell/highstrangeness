@@ -3,6 +3,7 @@ package com.example.highstrangeness.ui.post_detail;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuItemImpl;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,17 +39,25 @@ import com.example.highstrangeness.utilities.LocationUtility;
 import com.example.highstrangeness.utilities.PostUtility;
 import com.example.highstrangeness.utilities.StorageUtility;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.common.collect.Lists;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class PostDetailActivity extends AppCompatActivity implements LocationUtility.ReturnAddressListener, StorageUtility.GetPostImageNamesListener {
 
-    public static final String TAG =  "PostDetailActivity";
+    public static final String TAG = "PostDetailActivity";
     public static final String EXTRA_IMAGE_NAME = "EXTRA_IMAGE_NAME";
     public static final String EXTRA_POST_ID = "EXTRA_POST_ID";
     public static final String EXTRA_OLD_POST = "EXTRA_OLD_POST";
@@ -85,9 +94,11 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
             public void onClick(View view) {
                 if (post.getUserId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
                     Intent intent = new Intent(PostDetailActivity.this, AccountActivity.class);
+                    intent.putExtra("title", "My Posts");
                     startActivity(intent);
                 }else {
                     Intent intent = new Intent(PostDetailActivity.this, AccountActivity.class);
+                    intent.putExtra("title", "Posts");
                     intent.putExtra("uid", post.getUserId());
                     startActivity(intent);
                 }
@@ -151,8 +162,71 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
             getMenuInflater().inflate(R.menu.my_post_menu, menu);
         }else {
             getMenuInflater().inflate(R.menu.post_menu, menu);
+            MenuItem menuItem = menu.findItem(R.id.item_favorite);
+            checkIfPostIsBookmarked(false, menuItem);
         }
         return true;
+    }
+
+    private void checkIfPostIsBookmarked(final boolean shouldPerformAction, final MenuItem menuItem) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final DocumentReference documentReference = db.collection("bookmarks")
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                Log.d(TAG, "checkIfPostIsBookmarked: ");
+
+                final ArrayList<String> bookmarks = new ArrayList<>();
+                if (task.isSuccessful() && task.getResult() != null &&
+                        task.getResult().getData() != null) {
+                    Log.d(TAG, "onComplete: success");
+                    bookmarks.addAll((ArrayList<String>) task.getResult().getData().get("bookmarks"));
+                }
+                updateBookmarks(bookmarks, shouldPerformAction, menuItem, documentReference);
+            }
+        });
+    }
+
+    private void updateBookmarks(ArrayList<String> bookmarks, boolean shouldPerformAction, MenuItem menuItem, DocumentReference documentReference) {
+        if (bookmarks != null) {
+            if (bookmarks.contains(post.getId())) {
+                menuItem.setIcon(R.drawable.ic_bookmark_tap);
+                if (shouldPerformAction) {
+                    bookmarks.remove(post.getId());
+                    final Map<String, Object> docData = new HashMap<>();
+                    docData.put("bookmarks", Lists.newArrayList(bookmarks));
+                    documentReference.set(docData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                menuItem.setIcon(R.drawable.ic_bookmark_no_tap);
+                                Toast.makeText(PostDetailActivity.this, "Removed from Favorites", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(PostDetailActivity.this, "Error removing from Favorites", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            } else {
+                if (shouldPerformAction) {
+                    bookmarks.add(post.getId());
+                    final Map<String, Object> docData = new HashMap<>();
+                    docData.put("bookmarks", Lists.newArrayList(bookmarks));
+                    documentReference.set(docData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                menuItem.setIcon(R.drawable.ic_bookmark_tap);
+                                Toast.makeText(PostDetailActivity.this, "Added to Favorites", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(PostDetailActivity.this, "Error adding to Favorites", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            }
+        }
     }
 
     @Override
@@ -166,6 +240,7 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
                 navigateToNewPostActivity();
                 break;
             case R.id.item_favorite:
+                checkIfPostIsBookmarked(true, item);
                 break;
             case R.id.item_report:
                 break;

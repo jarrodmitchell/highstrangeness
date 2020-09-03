@@ -31,9 +31,10 @@ public class FilteredPostListFragment extends Fragment {
 
     public static final String TAG = "FilteredPostListFragment";
 
-    public static FilteredPostListFragment newInstance(String uid) {
+    public static FilteredPostListFragment newInstance(String uid, boolean getBookmarks) {
 
         Bundle args = new Bundle();
+        args.putBoolean("getBookmarks", getBookmarks);
         args.putString("uid", uid);
         FilteredPostListFragment fragment = new FilteredPostListFragment();
         fragment.setArguments(args);
@@ -78,10 +79,13 @@ public class FilteredPostListFragment extends Fragment {
             recyclerView = getActivity().findViewById(R.id.recyclerViewPostsMain);
             layoutManager = new LinearLayoutManager(getContext());
             recyclerView.setLayoutManager(layoutManager);
-            if (getArguments() != null && getArguments().getString("uid") == null) {
-                PostUtility.getMyPosts(getActivity(), null);
-            }else{
+            if (getArguments() != null && getArguments().getString("uid") != null && !getArguments().getBoolean("getBookmarks")) {
                 PostUtility.getMyPosts(getActivity(), getArguments().getString("uid"));
+            }else if (getArguments() != null && getArguments().getString("uid") != null && getArguments().getBoolean("getBookmarks")) {
+                PostUtility.getBookmarks(getActivity(), getArguments().getString("uid"));
+            }
+            else {
+                PostUtility.getMyPosts(getActivity(), null);
             }
         }
     }
