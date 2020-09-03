@@ -19,6 +19,8 @@ public class MyPostsActivity extends AppCompatActivity implements FilteredPostLi
     public static final String EXTRA_POST = "EXTRA_POST";
     public static final int REQUEST_CODE = 0x113;
 
+    String uid;
+
     @Override
     public void onClick(Post post) {
         Intent intent = new Intent(MyPostsActivity.this, PostDetailActivity.class);
@@ -31,11 +33,19 @@ public class MyPostsActivity extends AppCompatActivity implements FilteredPostLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_posts);
         setTitle("Posts");
+        if (getIntent() != null && getIntent().hasExtra("uid")) {
+            uid = getIntent().getStringExtra("uid");
+        }
         loadFragment();
+
     }
 
     private void loadFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMyPosts, new FilteredPostListFragment()).commit();
+        if (uid == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMyPosts, new FilteredPostListFragment()).commit();
+        }else{
+            getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutMyPosts, FilteredPostListFragment.newInstance(uid)).commit();
+        }
     }
 
     @Override

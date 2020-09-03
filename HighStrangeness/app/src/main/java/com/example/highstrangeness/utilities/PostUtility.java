@@ -178,27 +178,29 @@ public class PostUtility {
 
     }
 
-    public static void getMyPosts(final Context context) {
+    public static void getMyPosts(final Context context, String uid) {
         Log.d(TAG, "getMyPosts: get mines");
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-
-            String id = currentUser.getUid();
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("posts").whereEqualTo(FIELD_UID, id).orderBy(FIELD_POST_DATE, Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    Log.d(TAG, "onComplete: complete");
-                    if (task.isSuccessful()) {
-                        parsePosts(context, task);
-                    }else {
-                        if (task.getException() != null) {
-                            Log.d(TAG, "onComplete: " + task.getException().getMessage());
-                        }
+        String id;
+        if (uid == null) {
+            id = Objects.requireNonNull(currentUser).getUid();
+        }else{
+            id = uid;
+        }
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("posts").whereEqualTo(FIELD_UID, id).orderBy(FIELD_POST_DATE, Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                Log.d(TAG, "onComplete: complete");
+                if (task.isSuccessful()) {
+                    parsePosts(context, task);
+                }else {
+                    if (task.getException() != null) {
+                        Log.d(TAG, "onComplete: " + task.getException().getMessage());
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     private static void parsePosts(final Context context, Task<QuerySnapshot> task) {

@@ -31,6 +31,15 @@ public class FilteredPostListFragment extends Fragment {
 
     public static final String TAG = "FilteredPostListFragment";
 
+    public static FilteredPostListFragment newInstance(String uid) {
+
+        Bundle args = new Bundle();
+        args.putString("uid", uid);
+        FilteredPostListFragment fragment = new FilteredPostListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public FilteredPostListFragment() {
     }
 
@@ -69,7 +78,11 @@ public class FilteredPostListFragment extends Fragment {
             recyclerView = getActivity().findViewById(R.id.recyclerViewPostsMain);
             layoutManager = new LinearLayoutManager(getContext());
             recyclerView.setLayoutManager(layoutManager);
-            PostUtility.getMyPosts(getActivity());
+            if (getArguments() != null && getArguments().getString("uid") == null) {
+                PostUtility.getMyPosts(getActivity(), null);
+            }else{
+                PostUtility.getMyPosts(getActivity(), getArguments().getString("uid"));
+            }
         }
     }
 

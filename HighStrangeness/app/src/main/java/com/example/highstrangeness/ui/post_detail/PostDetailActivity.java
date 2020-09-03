@@ -20,6 +20,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,6 +31,7 @@ import android.widget.Toolbar;
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.adapters.MediaAdapter;
 import com.example.highstrangeness.objects.Post;
+import com.example.highstrangeness.ui.account.AccountActivity;
 import com.example.highstrangeness.ui.main.MainActivity;
 import com.example.highstrangeness.ui.main.new_post.NewPostActivity;
 import com.example.highstrangeness.utilities.LocationUtility;
@@ -42,6 +44,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PostDetailActivity extends AppCompatActivity implements LocationUtility.ReturnAddressListener, StorageUtility.GetPostImageNamesListener {
 
@@ -66,6 +69,7 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
     PostMediaChangedReceiver postMediaChangedReceiver;
     RecyclerView recyclerView;
     Post post;
+    ImageView imageViewUserPic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +78,21 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
         setTitle("");
         postDeletedReceiver = new PostDeletedReceiver();
         postMediaChangedReceiver = new PostMediaChangedReceiver();
+
+        imageViewUserPic = findViewById(R.id.imageViewUserPostDetail);
+        imageViewUserPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (post.getUserId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
+                    Intent intent = new Intent(PostDetailActivity.this, AccountActivity.class);
+                    startActivity(intent);
+                }else {
+                    Intent intent = new Intent(PostDetailActivity.this, AccountActivity.class);
+                    intent.putExtra("uid", post.getUserId());
+                    startActivity(intent);
+                }
+            }
+        });
 
         if (getIntent() != null) {
             setViews(getIntent());
@@ -93,7 +112,6 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
             StorageUtility.getListOfPostImages(post.getId(), this);
 
             String id = post.getUserId();
-            ImageView imageViewUserPic = findViewById(R.id.imageViewUserPostDetail);
             StorageUtility.setProfileImage(this, id, 1, imageViewUserPic);
 
             StringBuilder stringBuilder = new StringBuilder();
