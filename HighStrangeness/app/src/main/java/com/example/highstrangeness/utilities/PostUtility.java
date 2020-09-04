@@ -56,7 +56,8 @@ public class PostUtility {
     public static void addPost(final String postId, final String title, final boolean firstHand, final Date date, final double latitude,
                                final double longitude, final String description, final String[] tags,
                                final ArrayList<Uri> imageUriList, ArrayList<Uri> audioUriList,
-                               ArrayList<Uri> videoUriList, final Context context, List<String> listOldImages) {
+                               ArrayList<Uri> videoUriList, final Context context, List<String> listOldImages,
+                               List<String> listOldVideos) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         final Map<String, Object> docData = new HashMap<>();
@@ -69,6 +70,8 @@ public class PostUtility {
         docData.put(FIELD_DESCRIPTION, description);
         docData.put(FIELD_POST_DATE, new Timestamp(Calendar.getInstance().getTime().getTime()));
         final List<String> contentTypes = new ArrayList<>();
+
+        //determine content types for new post
         if (postId == null) {
             if (imageUriList != null && !imageUriList.isEmpty()) {
                 Log.d(TAG, "addPost: add image content type");
@@ -81,12 +84,17 @@ public class PostUtility {
                 contentTypes.add("Video");
             }
         }else {
+            //determine content types for old post
             if ((listOldImages != null && listOldImages.size() > 0) || (imageUriList != null && !imageUriList.isEmpty()) ) {
                 contentTypes.add("Image");
             }
+            if ((listOldVideos != null && listOldVideos.size() > 0) || (videoUriList != null && !videoUriList.isEmpty()) ) {
+                contentTypes.add("Video");
+            }
         }
-
         docData.put(FIELD_CONTENT_TYPES, contentTypes);
+
+        //set tags
         if (tags != null && tags.length > 0) {
             docData.put(FIELD_TAGS, Arrays.asList(tags));
         }
@@ -94,6 +102,8 @@ public class PostUtility {
             Log.d(TAG, "addPost: in");
             final String id = (postId != null) ? postId : db.collection("posts").document().getId();
             docData.put(FIELD_ID, id);
+
+            //add post to db
             db.collection("posts").document(id)
                     .set(docData)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -102,9 +112,17 @@ public class PostUtility {
                             Log.d(TAG, "DocumentSnapshot successfully written!");
                             Toast.makeText(context, "Post Created", Toast.LENGTH_SHORT).show();
 
+                            //add new images to storage
                             if (imageUriList != null && imageUriList.size() > 0) {
                                 for (Uri uri : imageUriList) {
-                                    StorageUtility.updatePostImages(uri, id, context);
+                                    ImageStorageUtility.updatePostImages(uri, id, context);
+                                }
+                            }
+
+                            //add new images to storage
+                            if (videoUriList != null && videoUriList.size() > 0) {
+                                for (Uri uri : videoUriList) {
+                                    VideoStorageUtility.updatePostVideos(uri, id, context);
                                 }
                             }
                         }
@@ -313,15 +331,21 @@ public class PostUtility {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     if (contentTypes.contains("Image")) {
-                        StorageUtility.deletePostImages(context, id);
-                    }else {
-                        Intent intent = new Intent(ACTION_SEND_ALERT_POST_DELETED);
-                        context.sendBroadcast(intent);
+                        ImageStorageUtility.deletePostImages(context, id);
                     }
+                    if (contentTypes.contains("Audio")) {
+
+                    }
+                    if (contentTypes.contains("Video")) {
+                        VideoStorageUtility.deletePostVideos(context, id);
+                    }
+                    Intent intent = new Intent(ACTION_SEND_ALERT_POST_DELETED);
+                    context.sendBroadcast(intent);
                 }else {
                     Log.d(TAG, "onComplete: "  + id);
                 }
             }
         });
     }
+
 }

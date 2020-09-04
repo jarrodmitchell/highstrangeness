@@ -8,18 +8,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.highstrangeness.R;
-import com.example.highstrangeness.objects.Filter;
 import com.example.highstrangeness.ui.account.edit_account.EditAccountActivity;
 import com.example.highstrangeness.ui.account.my_posts.MyPostsActivity;
-import com.example.highstrangeness.ui.main.filter.FilterActivity;
-import com.example.highstrangeness.utilities.StorageUtility;
+import com.example.highstrangeness.utilities.ImageStorageUtility;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,8 +23,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
 
 public class AccountActivity extends AppCompatActivity {
     
@@ -103,7 +97,7 @@ public class AccountActivity extends AppCompatActivity {
             Log.d(TAG, "updateViews: username = " + user.getDisplayName());
             Log.d(TAG, "updateViews: email = " + user.getEmail());
 
-            StorageUtility.setProfileImage(this, user.getUid(), 2, imageViewProfilePic);
+            ImageStorageUtility.setProfileImage(this, user.getUid(), 2, imageViewProfilePic);
             textViewUsername.setText(user.getDisplayName());
             textViewEmail.setText(user.getEmail());
             buttonLogOut.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +109,7 @@ public class AccountActivity extends AppCompatActivity {
                 }
             });
         }else{
-            StorageUtility.setProfileImage(this, uId, 2, imageViewProfilePic);
+            ImageStorageUtility.setProfileImage(this, uId, 2, imageViewProfilePic);
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             final DocumentReference documentReference = db.collection("user").document(uId);
             documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

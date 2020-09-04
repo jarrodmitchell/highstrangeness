@@ -3,13 +3,11 @@ package com.example.highstrangeness.ui.post_detail;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuItemImpl;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,11 +21,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.adapters.MediaAdapter;
@@ -37,7 +33,8 @@ import com.example.highstrangeness.ui.main.MainActivity;
 import com.example.highstrangeness.ui.main.new_post.NewPostActivity;
 import com.example.highstrangeness.utilities.LocationUtility;
 import com.example.highstrangeness.utilities.PostUtility;
-import com.example.highstrangeness.utilities.StorageUtility;
+import com.example.highstrangeness.utilities.ImageStorageUtility;
+import com.example.highstrangeness.utilities.VideoStorageUtility;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -55,7 +52,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class PostDetailActivity extends AppCompatActivity implements LocationUtility.ReturnAddressListener, StorageUtility.GetPostImageNamesListener {
+public class PostDetailActivity extends AppCompatActivity implements LocationUtility.ReturnAddressListener,
+        ImageStorageUtility.GetPostImageNamesListener, VideoStorageUtility.GetPostVideoNamesListener {
 
     public static final String TAG = "PostDetailActivity";
     public static final String EXTRA_IMAGE_NAME = "EXTRA_IMAGE_NAME";
@@ -64,9 +62,15 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
     public static final int REQUEST_CODE_EDIT_POST = 0x87;
 
     @Override
+    public void getPostVideoNames(List<String> videoNames) {
+        MediaAdapter adapter = new MediaAdapter("video", this, videoNames, post.getId());
+        recyclerViewVideos.setAdapter(adapter);
+    }
+
+    @Override
     public void getPostImagesName(List<String> imageNames) {
         MediaAdapter adapter = new MediaAdapter("image", this, imageNames, post.getId());
-        recyclerView.setAdapter(adapter);
+        recyclerViewImages.setAdapter(adapter);
     }
 
     @Override
@@ -76,7 +80,8 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
 
     PostDeletedReceiver postDeletedReceiver;
     PostMediaChangedReceiver postMediaChangedReceiver;
-    RecyclerView recyclerView;
+    RecyclerView recyclerViewImages;
+    RecyclerView recyclerViewVideos;
     Post post;
     ImageView imageViewUserPic;
 
@@ -115,15 +120,22 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
         if (post != null) {
             LocationUtility.getAddress(this, new LatLng(post.getLatitude(), post.getLongitude()), this);
 
-            recyclerView = findViewById(R.id.recyclerViewImagesPostDetail);
-            recyclerView.setLayoutManager(
+            recyclerViewImages = findViewById(R.id.recyclerViewImagesPostDetail);
+            recyclerViewImages.setLayoutManager(
                     new LinearLayoutManager(PostDetailActivity.this,
                             LinearLayoutManager.HORIZONTAL,
                             false));
-            StorageUtility.getListOfPostImages(post.getId(), this);
+            ImageStorageUtility.getListOfPostImages(post.getId(), this);
+
+            recyclerViewVideos = findViewById(R.id.recyclerViewVideosPostDetail);
+            recyclerViewVideos.setLayoutManager(
+                    new LinearLayoutManager(PostDetailActivity.this,
+                            LinearLayoutManager.HORIZONTAL,
+                            false));
+            VideoStorageUtility.getListOfPostVideos(post.getId(), this);
 
             String id = post.getUserId();
-            StorageUtility.setProfileImage(this, id, 1, imageViewUserPic);
+            ImageStorageUtility.setProfileImage(this, id, 1, imageViewUserPic);
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(post.getUsername());
@@ -252,7 +264,8 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
     protected void onStart() {
         super.onStart();
         registerReceiver(postDeletedReceiver, new IntentFilter(PostUtility.ACTION_SEND_ALERT_POST_DELETED));
-        registerReceiver(postMediaChangedReceiver, new IntentFilter(StorageUtility.ACTION_POST_IMAGES_CHANGED));
+        registerReceiver(postMediaChangedReceiver, new IntentFilter(ImageStorageUtility.ACTION_POST_IMAGES_CHANGED));
+        registerReceiver(postMediaChangedReceiver, new IntentFilter(VideoStorageUtility.ACTION_POST_VIDEOS_CHANGED));
     }
 
     @Override
@@ -323,7 +336,8 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction() != null &&
-                    intent.getAction().equals(StorageUtility.ACTION_POST_IMAGES_CHANGED)) {
+                    (intent.getAction().equals(ImageStorageUtility.ACTION_POST_IMAGES_CHANGED) ||
+                            intent.getAction().equals(VideoStorageUtility.ACTION_POST_VIDEOS_CHANGED))) {
                 updateMedia();
             }
         }
@@ -331,7 +345,8 @@ public class PostDetailActivity extends AppCompatActivity implements LocationUti
 
     private void updateMedia() {
         Log.d(TAG, "updateMedia: ");
-        StorageUtility.getListOfPostImages(post.getId(), this);
+        ImageStorageUtility.getListOfPostImages(post.getId(), this);
+        VideoStorageUtility.getListOfPostVideos(post.getId(), this);
     }
 
 }

@@ -28,6 +28,7 @@ public class SelectedFilesAdapter extends RecyclerView.Adapter<SelectedFilesAdap
     private String list;
 
     public SelectedFilesAdapter(Context context, List<Uri> fileUris, String list) {
+        Log.d(TAG, "SelectedFilesAdapter: in");
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.fileUris = fileUris;
@@ -59,8 +60,8 @@ public class SelectedFilesAdapter extends RecyclerView.Adapter<SelectedFilesAdap
             holder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW);
-                    intent.putExtra(PostPt2Fragment.EXTRA_STRING_LIST, list);
+                    Intent intent = new Intent(PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW_NEW_POST);
+                    intent.putExtra(PostPt2Fragment.EXTRA_IMAGE_STRING_LIST, list);
                     intent.putExtra(PostPt2Fragment.EXTRA_FILE_INDEX, position);
                     context.sendBroadcast(intent);
                     Log.d(TAG, "onClick: where");

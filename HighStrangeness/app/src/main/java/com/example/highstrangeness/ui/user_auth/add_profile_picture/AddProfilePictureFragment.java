@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.highstrangeness.R;
-import com.example.highstrangeness.utilities.StorageUtility;
+import com.example.highstrangeness.utilities.ImageStorageUtility;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
@@ -104,7 +104,7 @@ public class AddProfilePictureFragment extends Fragment {
     public void onStart() {
         super.onStart();
         if (getContext() != null) {
-            getContext().registerReceiver(profilePicUpdatedReceiver, new IntentFilter(StorageUtility.ACTION_PROFILE_PIC_UPDATED));
+            getContext().registerReceiver(profilePicUpdatedReceiver, new IntentFilter(ImageStorageUtility.ACTION_PROFILE_PIC_UPDATED));
         }
     }
 
@@ -129,7 +129,7 @@ public class AddProfilePictureFragment extends Fragment {
                 try {
                     inputStream = getActivity().getContentResolver().openInputStream(image);
                     imageViewProfilePic.setImageBitmap(BitmapFactory.decodeStream(inputStream));
-                    StorageUtility.updateProfileImage(image, getContext());
+                    ImageStorageUtility.updateProfileImage(image, getContext());
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -140,7 +140,7 @@ public class AddProfilePictureFragment extends Fragment {
     private class ProfilePicUpdatedReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction() != null && intent.getAction().equals(StorageUtility.ACTION_PROFILE_PIC_UPDATED)) {
+            if (intent.getAction() != null && intent.getAction().equals(ImageStorageUtility.ACTION_PROFILE_PIC_UPDATED)) {
                 Log.d(TAG, "onReceive: update");
                 navigateToMainScreenListener.navigateToMainScreen();
             }

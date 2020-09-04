@@ -27,6 +27,7 @@ import com.example.highstrangeness.dialogs.DatePickerFragment;
 import com.example.highstrangeness.objects.Filter;
 import com.example.highstrangeness.ui.account.AccountActivity;
 import com.example.highstrangeness.ui.main.MainActivity;
+import com.example.highstrangeness.utilities.PostUtility;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.common.collect.Lists;
@@ -192,6 +193,10 @@ public class FilterActivity extends AppCompatActivity  implements DatePickerDial
             hasImage = Filter.filter.isHasImages();
             hasAudio = Filter.filter.isHasAudio();
             hasVideo = Filter.filter.isHasVideo();
+
+            checkBoxImage.setChecked(hasImage);
+            checkBoxAudio.setChecked(hasAudio);
+            checkBoxVideo.setChecked(hasVideo);
         }
     }
 
@@ -229,8 +234,8 @@ public class FilterActivity extends AppCompatActivity  implements DatePickerDial
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         if (tag != null || startDate != null || endDate != null || hasImage || hasAudio || hasVideo) {
             Filter.filter = new Filter(tag, startDate, endDate, hasImage, hasAudio, hasVideo);
         }else {

@@ -23,7 +23,7 @@ import android.widget.Toast;
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.objects.User;
 import com.example.highstrangeness.utilities.FormValidationUtility;
-import com.example.highstrangeness.utilities.StorageUtility;
+import com.example.highstrangeness.utilities.ImageStorageUtility;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -70,7 +70,7 @@ public class EditAccountActivity extends AppCompatActivity {
         buttonEditEmail = findViewById(R.id.buttonEditEmail);
         buttonEditPassword = findViewById(R.id.buttonEditPassword);
 
-        StorageUtility.setProfileImage(this, User.currentUser.getId(), 2, imageViewProfilePic);
+        ImageStorageUtility.setProfileImage(this, User.currentUser.getId(), 2, imageViewProfilePic);
         if (user != null) {
             editTextEmail.setText(user.getEmail());
             editTextUsername.setText(user.getDisplayName());
@@ -376,7 +376,7 @@ public class EditAccountActivity extends AppCompatActivity {
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(image);
                     imageViewProfilePic.setImageBitmap(BitmapFactory.decodeStream(inputStream));
-                    StorageUtility.updateProfileImage(image, this);
+                    ImageStorageUtility.updateProfileImage(image, this);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }

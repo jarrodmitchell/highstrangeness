@@ -73,30 +73,54 @@ public class MainActivity extends AppCompatActivity implements PostUtility.SetPo
                 @Override
                 public boolean test(Post post) {
                     if (Filter.filter.getTag() != null && !post.getTags().contains(Filter.filter.getTag())) {
+                        Log.d(TAG, "test: tags");
                         return false;
-                    }
+                    }else
                     if (Filter.filter.getStartDate() != null && post.getDate().getTime() < Filter.filter.getStartDate().getTime()) {
+                        Log.d(TAG, "test: old date = " + post.getDate().getTime() + " name = " + post.getTitle());
+                        Log.d(TAG, "test: filter date = " + Filter.filter.getStartDate().getTime());
                         return false;
-                    }
+                    }else
                     if (Filter.filter.getEndDate() != null && post.getDate().getTime() > Filter.filter.getEndDate().getTime()) {
                         return false;
-                    }
+                    }else
                     if (Filter.filter.isHasImages() && !post.getContentTypes().contains("Image")) {
                         return false;
-                    }
+                    }else
                     if (Filter.filter.isHasAudio() && !post.getContentTypes().contains("Audio")) {
                         return false;
-                    }
+                    }else
                     if (Filter.filter.isHasVideo() && !post.getContentTypes().contains("Video")) {
                         return false;
                     }
 
                     return true;
                 }
+            }).sorted(new Comparator<Post>() {
+                @Override
+                public int compare(Post post, Post t1) {
+                    if (post.getDate().getTime() > t1.getDate().getTime()) {
+                        return -1;
+                    }else if (post.getDate().getTime() < t1.getDate().getTime()) {
+                        return 1;
+                    }
+                    return 0;
+                }
             }).collect(Collectors.toCollection(ArrayList<Post>::new));
         }else {
             Log.d(TAG, "setPostListener: Post list = " + postList.size());
             Log.d(TAG, "setPostListener: posts = " + posts.size());
+            posts.sort(new Comparator<Post>() {
+                @Override
+                public int compare(Post post, Post t1) {
+                    if (post.getDate().getTime() > t1.getDate().getTime()) {
+                        return -1;
+                    }else if (post.getDate().getTime() < t1.getDate().getTime()) {
+                        return 1;
+                    }
+                    return 0;
+                }
+            });
             postList = posts;
         }
         Intent intent = new Intent(ACTION_LIST_UPDATED);

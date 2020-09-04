@@ -4,9 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.location.LocationManager;
-import android.media.Image;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
@@ -26,7 +24,7 @@ import com.example.highstrangeness.R;
 import com.example.highstrangeness.objects.MapState;
 import com.example.highstrangeness.objects.Post;
 import com.example.highstrangeness.ui.main.MainActivity;
-import com.example.highstrangeness.utilities.StorageUtility;
+import com.example.highstrangeness.utilities.ImageStorageUtility;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,8 +39,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -85,7 +81,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     markerInfoView.setPadding(24, 24, 24, 24);
                     markerInfoView.setBackground(ContextCompat.getDrawable(context, R.drawable.info_view_back));
 
-                    StorageUtility.setProfileImage(getActivity(), post.getUserId(), 0, imageViewUserPic);
+                    ImageStorageUtility.setProfileImage(getActivity(), post.getUserId(), 0, imageViewUserPic);
                     imageViewUserPic.setImageResource(R.drawable.user);
 
                     StringBuilder stringBuilder = new StringBuilder();

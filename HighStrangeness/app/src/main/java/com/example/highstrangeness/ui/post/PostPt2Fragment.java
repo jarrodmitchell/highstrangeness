@@ -34,18 +34,14 @@ import com.example.highstrangeness.adapters.OldFilesAdapter;
 import com.example.highstrangeness.adapters.SelectedFilesAdapter;
 import com.example.highstrangeness.objects.NewPost;
 import com.example.highstrangeness.objects.Post;
-import com.example.highstrangeness.ui.main.MainActivity;
-import com.example.highstrangeness.utilities.StorageUtility;
+import com.example.highstrangeness.utilities.ImageStorageUtility;
+import com.example.highstrangeness.utilities.VideoStorageUtility;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.common.collect.Lists;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.firestore.model.Document;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -72,9 +68,10 @@ public class PostPt2Fragment extends Fragment {
     public static final int REQUEST_CODE_IMAGE_CAPTURE = 0x077;
     public static final int REQUEST_CODE_VIDEO_FILE_PICKER = 0x078;
     public static final int REQUEST_CODE_VIDEO_CAPTURE = 0x079;
-    public static final String EXTRA_STRING_LIST = "EXTRA_STRING_LIST";
+    public static final String EXTRA_IMAGE_STRING_LIST = "EXTRA_IMAGE_STRING_LIST";
+    public static final String EXTRA_VIDEO_STRING_LIST = "EXTRA_VIDEO_STRING_LIST";
     public static final String EXTRA_FILE_INDEX = "EXTRA_FILE_INDEX";
-    public static final String ACTION_UPDATE_RECYCLE_VIEW = "ACTION_UPDATE_RECYCLE_VIEW";
+    public static final String ACTION_UPDATE_RECYCLE_VIEW_NEW_POST = "ACTION_UPDATE_RECYCLE_VIEW";
     public static final String ACTION_SET_RECYCLE_VIEW_OLD_POST = "ACTION_SET_RECYCLE_VIEW_OLD_POST";
     public static final String ACTION_UPDATE_RECYCLE_VIEW_OLD_POST = "ACTION_UPDATE_RECYCLE_VIEW_OLD_POST";
 
@@ -89,7 +86,7 @@ public class PostPt2Fragment extends Fragment {
     }
 
     public interface AddPostToFirebase {
-        void addPostToFirebase(String[] tags, String id, List<String> imageNameList);
+        void addPostToFirebase(String[] tags, String id, List<String> imageNameList, List<String> videoNameList);
     }
 
     public interface SaveTagsListener {
@@ -133,11 +130,15 @@ public class PostPt2Fragment extends Fragment {
     Button buttonAddVideo;
     RecyclerView recyclerViewImages;
     RecyclerView recyclerViewOldImages;
+    RecyclerView recyclerViewVideos;
+    RecyclerView recyclerViewOldVideos;
     SelectedFilesAdapter selectedFilesAdapter;
-    OldFilesAdapter oldFilesAdapter;
+    OldFilesAdapter oldImageFilesAdapter;
+    OldFilesAdapter oldVideoFilesAdapter;
     Context context;
     StorageReference storageReference;
     List<String> imageNameList;
+    List<String> videoNameList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -166,12 +167,22 @@ public class PostPt2Fragment extends Fragment {
             setVideoUriListListener = (SetVideoUriListListener) getActivity();
             getOldPostListener = (GetOldPostListener) getActivity();
             getNewPostListener = (GetNewPostListener) getActivity();
+
+            //set up IMAGE recycler views
             recyclerViewImages = getActivity().findViewById(R.id.recyclerViewImages);
             recyclerViewOldImages = getActivity().findViewById(R.id.recyclerViewOldImages);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
             recyclerViewImages.setLayoutManager(layoutManager);
             RecyclerView.LayoutManager layoutManagerOldImages = new LinearLayoutManager(getContext());
             recyclerViewOldImages.setLayoutManager(layoutManagerOldImages);
+
+            //set up VIDEO recycler views
+            recyclerViewVideos = getActivity().findViewById(R.id.recyclerViewVideos);
+            recyclerViewOldVideos = getActivity().findViewById(R.id.recyclerViewOldVideos);
+            RecyclerView.LayoutManager layoutManagerVideos = new LinearLayoutManager(getContext());
+            recyclerViewVideos.setLayoutManager(layoutManagerVideos);
+            RecyclerView.LayoutManager layoutManagerOldVideos = new LinearLayoutManager(getContext());
+            recyclerViewOldVideos.setLayoutManager(layoutManagerOldVideos);
 
             final EditText editTextTags =  getActivity().findViewById(R.id.editTextTags);
             editTextTags.addTextChangedListener(new TextWatcher() {
@@ -193,6 +204,7 @@ public class PostPt2Fragment extends Fragment {
                 }
             });
 
+            //FINISH button tapped
             Button buttonFinish = getActivity().findViewById(R.id.buttonFinish);
             buttonFinish.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -226,13 +238,14 @@ public class PostPt2Fragment extends Fragment {
 
                     Log.d(TAG, "onClick: tag " + tags[0].length());
                     if (getOldPostListener.getPostListener() != null)  {
-                        addPostToFirebase.addPostToFirebase(trimmedTags, getOldPostListener.getPostListener().getId(), imageNameList);
+                        addPostToFirebase.addPostToFirebase(trimmedTags, getOldPostListener.getPostListener().getId(), imageNameList, videoNameList);
                     }else{
-                        addPostToFirebase.addPostToFirebase(trimmedTags, null, null);
+                        addPostToFirebase.addPostToFirebase(trimmedTags, null, null, null);
                     }
                 }
             });
 
+            //Add IMAGE button tapped
             getActivity().findViewById(R.id.buttonAddImage).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -272,6 +285,7 @@ public class PostPt2Fragment extends Fragment {
                 }
             });
 
+            //Add VIDEO button tapped
             getActivity().findViewById(R.id.buttonAddVideo).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -316,7 +330,8 @@ public class PostPt2Fragment extends Fragment {
             NewPost newPost = getNewPostListener.getNewPostValues();
             if (newPost == null && oldPost != null && oldPost.getTags() != null && !oldPost.getTags().isEmpty()) {
                 Log.d(TAG, "onActivityCreated: old");
-                StorageUtility.getListOfPostImages(oldPost.getId(), getActivity());
+                ImageStorageUtility.getListOfPostImages(oldPost.getId(), getActivity());
+                VideoStorageUtility.getListOfPostVideos(oldPost.getId(), getActivity());
 
                 StringBuilder stringBuilder = new StringBuilder();
                 for (int i = 0; i < oldPost.getTags().size(); i++) {
@@ -331,12 +346,15 @@ public class PostPt2Fragment extends Fragment {
                 Log.d(TAG, "onActivityCreated: old and new");
                 editTextTags.setText(newPost.getTags());
                 buttonFinish.setText(R.string.edit_post);
-                StorageUtility.getListOfPostImages(oldPost.getId(), getActivity());
+                ImageStorageUtility.getListOfPostImages(oldPost.getId(), getActivity());
+                VideoStorageUtility.getListOfPostVideos(oldPost.getId(), getActivity());
                 updateMainRecycleView(newPost.getImageUris(), recyclerViewImages, "images");
+                updateMainRecycleView(newPost.getVideoUris(), recyclerViewVideos, "videos");
             }else if (newPost != null) {
                 Log.d(TAG, "onActivityCreated: new");
                 editTextTags.setText(newPost.getTags());
                 updateMainRecycleView(newPost.getImageUris(), recyclerViewImages, "images");
+                updateMainRecycleView(newPost.getVideoUris(), recyclerViewVideos, "videos");
             }
         }
     }
@@ -352,17 +370,17 @@ public class PostPt2Fragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() != null) {
-                Log.d(TAG, "onReceive: ");
+                Log.d(TAG, "onReceive: Action = " + intent.getAction());
                 switch (intent.getAction()) {
-                    case PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW:
-                        Log.d(TAG, "onReceive: " + ACTION_UPDATE_RECYCLE_VIEW);
-                        String list = intent.getStringExtra(EXTRA_STRING_LIST);
+                    case PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW_NEW_POST:
+                        Log.d(TAG, "onReceive: " + ACTION_UPDATE_RECYCLE_VIEW_NEW_POST);
+                        String list = intent.getStringExtra(EXTRA_IMAGE_STRING_LIST);
                         int index = intent.getIntExtra(EXTRA_FILE_INDEX, -1);
                         Log.d(TAG, "onReceive: count");
                         if (list != null && index > -1) {
+                            ArrayList<ArrayList<Uri>> mediaLists = getMediaListsListener.getMediaLists();
                             switch (list) {
                                 case "images":
-                                    ArrayList<ArrayList<Uri>> mediaLists = getMediaListsListener.getMediaLists();
                                     if (mediaLists.get(0).size() > index) {
                                         mediaLists.get(0).remove(index);
                                         Log.d(TAG, "onReceive: index = " + index);
@@ -374,15 +392,26 @@ public class PostPt2Fragment extends Fragment {
 //                        updateRecycleView(audioUris, recyclerViewAudio);
                                     break;
                                 case "videos":
-//                        updateRecycleView(videoUris, index, recyclerViewVideo);
+                                    if (mediaLists.get(2).size() > index) {
+                                        mediaLists.get(2).remove(index);
+                                        Log.d(TAG, "onReceive: index = " + index);
+                                        Log.d(TAG, "onReceive: count = " + mediaLists.get(2).size());
+                                    }
+                                    updateMainRecycleView(mediaLists.get(2), recyclerViewVideos, list);
                                     break;
                             }
                         }
                         break;
 
                     case PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW_OLD_POST:
-                        updateOldRecycleView(recyclerViewOldImages, intent.getStringArrayListExtra(PostPt2Fragment.EXTRA_STRING_LIST));
-                        Log.d(TAG, "onReceive: " + ACTION_UPDATE_RECYCLE_VIEW_OLD_POST);
+                        if (intent.hasExtra(PostPt2Fragment.EXTRA_IMAGE_STRING_LIST)) {
+                            Log.d(TAG, "onReceive: has old images");
+                            updateOldRecycleView(recyclerViewOldImages, intent.getStringArrayListExtra(PostPt2Fragment.EXTRA_IMAGE_STRING_LIST));
+                        }
+                        if (intent.hasExtra(PostPt2Fragment.EXTRA_VIDEO_STRING_LIST)) {
+                            Log.d(TAG, "onReceive: has old videos");
+                            updateOldRecycleView(recyclerViewOldVideos, intent.getStringArrayListExtra(PostPt2Fragment.EXTRA_VIDEO_STRING_LIST));
+                        }
                         break;
                 }
             }
@@ -403,7 +432,7 @@ public class PostPt2Fragment extends Fragment {
         super.onResume();
         if (getActivity() != null) {
             updateRecycleViewReceiver = new UpdateRecycleViewReceiver();
-            getActivity().registerReceiver(updateRecycleViewReceiver, new IntentFilter(ACTION_UPDATE_RECYCLE_VIEW));
+            getActivity().registerReceiver(updateRecycleViewReceiver, new IntentFilter(ACTION_UPDATE_RECYCLE_VIEW_NEW_POST));
             getActivity().registerReceiver(updateRecycleViewReceiver, new IntentFilter(ACTION_UPDATE_RECYCLE_VIEW_OLD_POST));
         }
     }
@@ -417,10 +446,22 @@ public class PostPt2Fragment extends Fragment {
 
     void updateOldRecycleView(RecyclerView recyclerView, List<String > list) {
         if (list != null) {
-            imageNameList = list;
-            oldFilesAdapter = new OldFilesAdapter("images", getContext(), imageNameList, getOldPostListener.getPostListener().getId());
-            recyclerView.setAdapter(oldFilesAdapter);
-            Log.d(TAG, "updateOldRecycleView: "+imageNameList.size());
+            switch (recyclerView.getId()) {
+                case R.id.recyclerViewOldImages:
+                    imageNameList = list;
+                    oldImageFilesAdapter = new OldFilesAdapter("images", getContext(), imageNameList, getOldPostListener.getPostListener().getId());
+                    Log.d(TAG, "updateOldRecycleView: image list size = "+imageNameList.size());
+                    recyclerViewOldImages.setAdapter(oldImageFilesAdapter);
+                    break;
+                case R.id.recyclerViewOldAudios:
+                    break;
+                case R.id.recyclerViewOldVideos:
+                    videoNameList = list;
+                    oldImageFilesAdapter = new OldFilesAdapter("videos", getContext(), videoNameList, getOldPostListener.getPostListener().getId());
+                    Log.d(TAG, "updateOldRecycleView: video list size = "+videoNameList.size());
+                    recyclerViewOldVideos.setAdapter(oldImageFilesAdapter);
+                    break;
+            }
         }
     }
 
@@ -451,14 +492,15 @@ public class PostPt2Fragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        ArrayList<Uri> uriList = new ArrayList<>();
 
         if (resultCode == RESULT_OK) {
             Log.d(TAG, "onActivityResult: result ok");
-            ArrayList<Uri> uriList = getMediaListsListener.getMediaLists().get(0);
-            if (uriList == null) {
-                uriList = new ArrayList<>();
-            }
             if (requestCode == REQUEST_CODE_IMAGE_FILE_PICKER && data != null && data.getClipData() != null) {
+                ArrayList<Uri> uris = getMediaListsListener.getMediaLists().get(0);
+                if (uris != null) {
+                    uriList = uris;
+                }
 
                 for(int i = 0; i < data.getClipData().getItemCount(); i++) {
                     Uri image = data.getClipData().getItemAt(i).getUri();
@@ -468,6 +510,10 @@ public class PostPt2Fragment extends Fragment {
                     }
                 }
             }else if (requestCode == REQUEST_CODE_IMAGE_CAPTURE && data != null && data.getExtras() != null) {
+                ArrayList<Uri> uris = getMediaListsListener.getMediaLists().get(0);
+                if (uris != null) {
+                    uriList = uris;
+                }
 
                 //save image
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
@@ -491,12 +537,45 @@ public class PostPt2Fragment extends Fragment {
                         Log.d(TAG, "onActivityResult: no file");
                     }
                 }
+            }if (requestCode == REQUEST_CODE_VIDEO_FILE_PICKER && data != null && data.getClipData() != null) {
+                ArrayList<Uri> uris = getMediaListsListener.getMediaLists().get(2);
+                if (uris != null) {
+                    uriList = uris;
+                }
+
+                for(int i = 0; i < data.getClipData().getItemCount(); i++) {
+                    Uri videoUri = data.getClipData().getItemAt(i).getUri();
+                    if (uriList != null && !uriList.contains(videoUri)) {
+                        System.out.println("image" + i + "=" + videoUri.toString());
+                        uriList.add(videoUri);
+                    }
+                }
+            }else if (requestCode == REQUEST_CODE_VIDEO_CAPTURE && data != null && data.getData() != null) {
+                ArrayList<Uri> uris = getMediaListsListener.getMediaLists().get(2);
+                if (uris != null) {
+                    uriList = uris;
+                }
+
+                //save video
+                Uri videoUri = data.getData();
+                uriList.add(videoUri);
             }
+
             Log.d(TAG, "onActivityResult: past");
-            setImageUriListListener.setImageUriList(uriList);
             if (uriList.size() > 0) {
                 Log.d(TAG, "onActivityResult: size = " + uriList.size());
-                updateMainRecycleView(uriList, recyclerViewImages, "images");
+
+                switch (requestCode) {
+                    case REQUEST_CODE_IMAGE_CAPTURE:
+                    case REQUEST_CODE_IMAGE_FILE_PICKER:
+                        setImageUriListListener.setImageUriList(uriList);
+                        updateMainRecycleView(uriList, recyclerViewImages, "images");
+                        break;
+                    case REQUEST_CODE_VIDEO_CAPTURE:
+                    case REQUEST_CODE_VIDEO_FILE_PICKER:
+                        setVideoUriListListener.setVideoUriList(uriList);
+                        updateMainRecycleView(uriList, recyclerViewVideos, "videos");
+                }
             }
         }
     }

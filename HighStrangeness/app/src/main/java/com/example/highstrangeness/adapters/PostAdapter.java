@@ -16,9 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.highstrangeness.R;
 import com.example.highstrangeness.objects.Post;
 import com.example.highstrangeness.ui.account.FilteredPostListFragment;
-import com.example.highstrangeness.ui.account.my_posts.MyPostsActivity;
 import com.example.highstrangeness.ui.main.list.ListFragment;
-import com.example.highstrangeness.utilities.StorageUtility;
+import com.example.highstrangeness.utilities.ImageStorageUtility;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -90,7 +89,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @Override
     public void onBindViewHolder(@NonNull final PostViewHolder holder, int position) {
         if (posts.size() > position) {
-            StorageUtility.setProfileImage(context, posts.get(position).getUserId(), 0, holder.imageViewUserPic);
+            ImageStorageUtility.setProfileImage(context, posts.get(position).getUserId(), 0, holder.imageViewUserPic);
 
             StringBuilder stringBuilder = new StringBuilder();
             Log.d(TAG, "onBindViewHolder: username" + posts.get(position).getUsername());

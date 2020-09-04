@@ -29,9 +29,9 @@
                 android:id="@+id/textViewTags"
                 style="@style/TextViewTitleEncounter"
                 android:layout_margin="32dp"
-                android:textColor="@color/colorPrimaryDark"
-
                 android:text="@string/tags_optional"
+
+                android:textColor="@color/colorPrimaryDark"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,9 +39,9 @@
                 android:id="@+id/textViewTagHint"
                 style="@style/TextViewTitleEncounter"
                 android:layout_marginStart="32dp"
-                android:textColor="@color/colorPrimaryDark"
-
                 android:text="@string/tag_hint"
+
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="13sp"
 
                 app:layout_constraintStart_toStartOf="parent"
@@ -63,173 +63,170 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextTags"
-                    android:hint="@string/ex_ghost_supernatural_spirit"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:hint="@string/ex_ghost_supernatural_spirit" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
 
 
             <TextView
                 android:id="@+id/textViewImages"
                 style="@style/TextViewTitleEncounter"
                 android:layout_margin="32dp"
-                android:textColor="@color/colorPrimaryDark"
-
                 android:text="@string/image_s"
-                app:layout_constraintTop_toBottomOf="@id/editTextTagLayout"
-                app:layout_constraintStart_toStartOf="parent" />
+
+                android:textColor="@color/colorPrimaryDark"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/editTextTagLayout" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewOldImages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
                 android:visibility="gone"
 
-                app:layout_constraintTop_toBottomOf="@id/textViewImages"/>
+                app:layout_constraintTop_toBottomOf="@id/textViewImages" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewImages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
 
-                app:layout_constraintTop_toBottomOf="@id/recyclerViewOldImages"/>
+                app:layout_constraintTop_toBottomOf="@id/recyclerViewOldImages" />
 
             <Button
                 android:id="@+id/buttonAddImage"
+                style="@style/ButtonMinor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
-                style="@style/ButtonMinor"
 
                 android:text="@string/add_image"
 
-                app:layout_constraintTop_toBottomOf="@id/recyclerViewImages"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recyclerViewImages" />
 
             <View
                 android:id="@+id/dividerDescriptionImage"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?android:attr/listDivider"
                 android:layout_marginStart="32dp"
                 android:layout_marginEnd="32dp"
+                android:background="?android:attr/listDivider"
 
-                app:layout_constraintTop_toBottomOf="@id/buttonAddImage"
-                app:layout_constraintBottom_toTopOf="@id/textViewAudios"/>
+                app:layout_constraintBottom_toTopOf="@id/textViewAudios"
+                app:layout_constraintTop_toBottomOf="@id/buttonAddImage" />
 
             <TextView
                 android:id="@+id/textViewAudios"
                 style="@style/TextViewTitleEncounter"
                 android:layout_margin="32dp"
-                android:textColor="@color/colorPrimaryDark"
-
                 android:text="Audio(s) (Optional)"
-                app:layout_constraintTop_toBottomOf="@id/buttonAddImage"
-                app:layout_constraintStart_toStartOf="parent" />
+
+                android:textColor="@color/colorPrimaryDark"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/buttonAddImage" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewOldAudios"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:layout_marginStart="32dp"
 
                 android:layout_marginTop="8dp"
-                android:layout_marginStart="32dp"
                 android:layout_marginEnd="32dp"
+                android:visibility="gone"
 
-                app:layout_constraintTop_toBottomOf="@id/textViewAudios"/>
+                app:layout_constraintTop_toBottomOf="@id/textViewAudios" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewAudios"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
 
-                app:layout_constraintTop_toBottomOf="@id/recyclerViewOldAudios"/>
+                app:layout_constraintTop_toBottomOf="@id/recyclerViewOldAudios" />
 
             <Button
                 android:id="@+id/buttonAddAudio"
+                style="@style/ButtonMinor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
-                style="@style/ButtonMinor"
 
                 android:text="@string/add_audio"
 
-                app:layout_constraintTop_toBottomOf="@id/recyclerViewAudios"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recyclerViewAudios" />
 
 
             <View
                 android:id="@+id/dividerAudioVideo"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?android:attr/listDivider"
                 android:layout_marginStart="32dp"
                 android:layout_marginEnd="32dp"
+                android:background="?android:attr/listDivider"
 
-                app:layout_constraintTop_toBottomOf="@id/buttonAddAudio"
-                app:layout_constraintBottom_toTopOf="@id/textViewVideos"/>
+                app:layout_constraintBottom_toTopOf="@id/textViewVideos"
+                app:layout_constraintTop_toBottomOf="@id/buttonAddAudio" />
 
 
             <TextView
                 android:id="@+id/textViewVideos"
                 style="@style/TextViewTitleEncounter"
                 android:layout_margin="32dp"
-                android:textColor="@color/colorPrimaryDark"
-
                 android:text="@string/video_s_optional"
-                app:layout_constraintTop_toBottomOf="@id/buttonAddAudio"
-                app:layout_constraintStart_toStartOf="parent" />
+
+                android:textColor="@color/colorPrimaryDark"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/buttonAddAudio" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewOldVideos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:layout_marginStart="32dp"
 
                 android:layout_marginTop="8dp"
-                android:layout_marginStart="32dp"
                 android:layout_marginEnd="32dp"
 
-                app:layout_constraintTop_toBottomOf="@id/textViewVideos"/>
+                app:layout_constraintTop_toBottomOf="@id/textViewVideos" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewVideos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
 
-                app:layout_constraintTop_toBottomOf="@id/recyclerViewOldVideos"/>
+                app:layout_constraintTop_toBottomOf="@id/recyclerViewOldVideos" />
 
             <Button
                 android:id="@+id/buttonAddVideo"
+                style="@style/ButtonMinor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
-                style="@style/ButtonMinor"
 
                 android:text="@string/add_video"
 
-                app:layout_constraintTop_toBottomOf="@id/recyclerViewVideos"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recyclerViewVideos" />
 
 
             <androidx.appcompat.widget.AppCompatButton
@@ -240,10 +237,10 @@
                 android:background="@drawable/button_shape_standard"
 
                 android:text="@string/add_post"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/buttonAddVideo"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@id/buttonAddVideo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

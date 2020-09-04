@@ -3,7 +3,6 @@ package com.example.highstrangeness.ui.main.new_post;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
@@ -17,13 +16,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.highstrangeness.R;
-import com.example.highstrangeness.adapters.OldFilesAdapter;
 import com.example.highstrangeness.dialogs.DatePickerFragment;
 import com.example.highstrangeness.objects.NewPost;
 import com.example.highstrangeness.objects.Post;
@@ -34,7 +31,8 @@ import com.example.highstrangeness.ui.post.PostPt2Fragment;
 import com.example.highstrangeness.ui.post_detail.PostDetailActivity;
 import com.example.highstrangeness.utilities.LocationUtility;
 import com.example.highstrangeness.utilities.PostUtility;
-import com.example.highstrangeness.utilities.StorageUtility;
+import com.example.highstrangeness.utilities.ImageStorageUtility;
+import com.example.highstrangeness.utilities.VideoStorageUtility;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.common.collect.Lists;
@@ -52,7 +50,8 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
         PostPt2Fragment.AddPostToFirebase, PostPt2Fragment.SaveTagsListener, PostPt2Fragment.GetMediaListsListener,
         PostPt2Fragment.SetImageUriListListener, PostPt2Fragment.SetAudioUriListListener,
         PostPt2Fragment.SetVideoUriListListener, PostPt2Fragment.GetOldPostListener,
-        PostPt2Fragment.GetNewPostListener, StorageUtility.GetPostImageNamesListener {
+        PostPt2Fragment.GetNewPostListener, ImageStorageUtility.GetPostImageNamesListener,
+        VideoStorageUtility.GetPostVideoNamesListener {
 
     public static final String TAG = "NewPostActivity";
     public static final String EXTRA_ADDRESS_RETURN = "EXTRA_ADDRESS_RETURN";
@@ -76,6 +75,21 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
     AddPostResultReceiver addPostResultReceiver;
 
     @Override
+    public void getPostVideoNames(List<String> videoNames) {
+        RecyclerView recyclerViewOldVideos = findViewById(R.id.recyclerViewOldVideos);
+
+        if (!videoNames.isEmpty()) {
+            Log.d(TAG, "getPostVideoNames: here");
+            recyclerViewOldVideos.setVisibility(View.VISIBLE);
+            Intent intent = new Intent(PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW_OLD_POST);
+            intent.putExtra(PostPt2Fragment.EXTRA_VIDEO_STRING_LIST, Lists.newArrayList(videoNames));
+            sendBroadcast(intent);
+        }else {
+            recyclerViewOldVideos.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
     public void getPostImagesName(List<String> imageNames) {
         
         RecyclerView recyclerViewOldImages = findViewById(R.id.recyclerViewOldImages);
@@ -84,7 +98,7 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
             Log.d(TAG, "getPostImagesName: in");
             recyclerViewOldImages.setVisibility(View.VISIBLE);
             Intent intent = new Intent(PostPt2Fragment.ACTION_UPDATE_RECYCLE_VIEW_OLD_POST);
-            intent.putExtra(PostPt2Fragment.EXTRA_STRING_LIST, Lists.newArrayList(imageNames));
+            intent.putExtra(PostPt2Fragment.EXTRA_IMAGE_STRING_LIST, Lists.newArrayList(imageNames));
             sendBroadcast(intent);
         }else {
             Log.d(TAG, "getPostImagesName: out");
@@ -134,13 +148,13 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
     }
 
     @Override
-    public void addPostToFirebase(String[] tags, String id, List<String> imageNameList) {
+    public void addPostToFirebase(String[] tags, String id, List<String> imageNameList, List<String> videoNameList) {
         if (newPost != null) {
             addPostResultReceiver = new AddPostResultReceiver();
             registerReceiver(addPostResultReceiver, new IntentFilter(ACTION_SEND_ADD_POST_RESULT));
             PostUtility.addPost(id, newPost.getTitle(), newPost.isFirstHand(), newPost.getDate(),
                     newPost.getLatitude(), newPost.getLongitude(), newPost.getDescription(), tags, imageUris,
-                    audioUris, videoUris, this, imageNameList);
+                    audioUris, videoUris, this, imageNameList, videoNameList);
         }
     }
 
@@ -239,6 +253,7 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
         displayPostPt2();
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -283,7 +298,8 @@ public class NewPostActivity extends AppCompatActivity implements PostPt1Fragmen
 
     public void displayPostPt2() {
         if (oldPost != null) {
-            StorageUtility.getListOfPostImages(oldPost.getId(), this);
+            ImageStorageUtility.getListOfPostImages(oldPost.getId(), this);
+            VideoStorageUtility.getListOfPostVideos(oldPost.getId(), this);
         }
         getSupportFragmentManager().beginTransaction().add(R.id.frameLayoutNewPost, PostPt2Fragment.newInstance()).addToBackStack(null).commit();
     }
