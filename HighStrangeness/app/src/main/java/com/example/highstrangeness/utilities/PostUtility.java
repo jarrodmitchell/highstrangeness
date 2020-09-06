@@ -242,21 +242,27 @@ public class PostUtility {
                     Log.d(TAG, "onComplete: success");
                     bookmarks.addAll((ArrayList<String>) task.getResult().getData().get("bookmarks"));
                 }
-                Log.d(TAG, "onComplete: bookmarks size" + bookmarks.get(0));
 
-                db.collection("posts").whereIn(FIELD_ID, bookmarks).orderBy(FIELD_POST_DATE, Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        Log.d(TAG, "onComplete: complete");
-                        if (task.isSuccessful()) {
-                            parsePosts(context, task);
-                        }else {
-                            if (task.getException() != null) {
-                                Log.d(TAG, "onComplete: " + task.getException().getMessage());
+                if (!bookmarks.isEmpty()) {
+                    db.collection("posts").whereIn(FIELD_ID, bookmarks).orderBy(FIELD_POST_DATE, Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            Log.d(TAG, "onComplete: complete");
+                            if (task.isSuccessful()) {
+                                parsePosts(context, task);
+                            } else {
+                                if (task.getException() != null) {
+                                    Log.d(TAG, "onComplete: " + task.getException().getMessage());
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }else{
+                    ArrayList<Post> posts = new ArrayList<>();
+                    Intent intent = new Intent(ACTION_SEND_FILTERED_LIST);
+                    intent.putExtra(EXTRA_FILTERED_POSTS, posts);
+                    context.sendBroadcast(intent);
+                }
             }
         });
     }

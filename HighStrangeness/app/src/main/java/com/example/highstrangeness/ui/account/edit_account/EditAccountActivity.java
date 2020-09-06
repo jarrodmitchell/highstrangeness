@@ -337,6 +337,13 @@ public class EditAccountActivity extends AppCompatActivity {
                 }
             }
         });
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                setDialogButtonTextColors(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE),
+                        alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE));
+            }
+        });
         alertDialog.show();
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
