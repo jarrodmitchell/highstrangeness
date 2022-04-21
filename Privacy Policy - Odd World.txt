@@ -1,0 +1,90 @@
+
+
+Version Date: April 21, 2022
+
+1. GENERAL
+Made For It ("Made For It" or "we" or "us" or "our") respects the privacy of everyone ("Apps' visitor" "user" or "you") that uses our app.
+
+The following Made For It Privacy Notice ("Privacy Notice") is designed to inform you, as a user of the App, about the types of personal information that Made For It may gather about or collect from you in connection with your use of the Sites. It also is intended to explain the conditions under which Made For It uses and discloses that personal information, and your rights in relation to that personal information.
+
+The app is hosted in the United States and is subject to U.S. state and federal law. If you are accessing our app from other jurisdictions, please be advised that you are transferring your personal information to us in the United States, and by using our Sites, you are agreeing to that transfer and use of your personal information in accordance with this Privacy Notice. You also agree to abide to the applicable laws of the Commonwealth of Virginia and U.S. federal law concerning your use of the Sites and your agreements with us. If your use of the Sites would be unlawful in your jurisdiction, please do not use the Sites.
+
+Information
+
+Made For It
+Email: madeforit.developer@gmail.com
+
+2. HOW WE COLLECT AND USE YOUR PERSONAL INFORMATION
+
+Made For It gathers personal information from users of the app. When you browse our app, subscribe to our services or contact us through various social or web forms you are voluntarily sharing personal information with us. This personal information also includes various data that we collect automatically. This may be the user’s Internet Protocol (IP) address, operating system, browser type and the locations of the Sites the user views right before arriving at, while navigating and immediately after leaving the Sites. It may also include various technical aspects of user’s computer or browser and users browsing habits that are collected through cookies. Made For It may analyze various mentioned personal information gathered from or about users to help Made For It better understand how the app is used and how to make it better. By identifying patterns and trends in usage, Made For It is able to better design the app to improve users’ experiences, both in terms of content and ease of use. From time to time, Made For It may also release the anonymized information gathered from the users in the aggregate, such as by publishing a report on trends in the usage of the app.
+
+When we believe disclosure is appropriate, we may disclose your information to help investigate, prevent or take other action regarding illegal activity, suspected fraud or other wrongdoing; to protect and defend the rights, property or safety of Made For It, our users, our employees or others; to comply with applicable law or cooperate with law enforcement; to enforce our Terms of Use or other agreements or policies, in response to a subpoena or similar investigative demand, a court order or a request for cooperation from a law enforcement or other government agency; to establish or exercise our legal rights; to defend against legal claims; or as otherwise required by law. In such cases, we may raise or waive any legal objection or right available to us. We will notify you if permitted before undertaking such disclosures.
+
+Made For It reserves the right to transfer all information in its possession to a successor organization in the event of a merger, acquisition, bankruptcy or other sale of all or a portion of Made For It’s assets. Other than to the extent ordered by a bankruptcy or other court, the use and disclosure of all transferred information will be subject to this Privacy Notice, or to a new privacy notice if you are given notice of that new privacy notice and are given an opportunity to affirmatively opt-out of it.
+3. DO WE SHARE YOUR PERSONAL INFORMATION?
+General Provisions
+
+Made For It contractually prohibits its contractors, affiliates, vendors and suppliers from disclosing any personal information received from Made For It, other than in accordance with this Privacy Notice. These third parties may include advertisers, providers of games, utilities, widgets and a variety of other third-party applications accessible through the app. Made For It neither owns nor controls the third-party websites and applications accessible through the Sites. Thus, this Privacy Notice does not apply to personal information provided to or gathered by the third parties that operate them. Before visiting a third party, or using a third-party application, whether by means of a link on the Sites, directly through the Sites or otherwise, and before providing any personal information to any such third party, users should inform themselves of the privacy policies and practices (if any) of the third party responsible for those Sites or applications, and should take those steps necessary to, in those users’ discretion, protect their privacy. 
+
+Analytics
+
+We may use third-party vendors, including Google, who use first-party cookies (such as the Google Analytics cookie) and third-party cookies (such as the DoubleClick cookie) together to inform, optimize and serve ads based on your past activity on the Sites, including Google Analytics for Display Advertising. The personal information collected may be used to, among other things, analyze and track data, determine the popularity of certain content and better understand online activity. If you do not want any personal information to be collected and used by Google Analytics, you can install an opt-out in your web browser (https://tools.google.com/dlpage/gaoptout/) and/or opt out from Google Analytics for Display Advertising or the Google Display Network by using Google’s Ads Settings (www.google.com/settings/ads).
+
+Social Media
+
+We may use hyperlinks on the app which will redirect you to a social network if you click on the respective link. However, when you click on a social plug-in, such as Facebook’s "Like" button or Twitter’s “tweet” button that particular social network’s plugin will be activated and your browser will directly connect to that provider’s servers. If you do not use these buttons none of your data will be sent to the respective social network’s plugin providers. To illustrate this further, imagine the scenario where you click on the Facebook’s "Like" button on the app. Facebook will receive your IP address, the browser version and screen resolution, and the operating system of the device you have used to access the app. Settings regarding privacy protection can be found on the websites of these social networks and are not within our control.
+
+4. MOBILE DEVICE ADDITIONAL TERMS
+
+• Mobile Device. If you use a mobile device to access or download any of our application, we may collect device personal information (such as your mobile device ID, model and manufacturer), operating system, version personal information and IP address.
+
+• Geo-Location Personal Information. Unless we have received your prior consent, we do not access or track any location-based personal information from your mobile device at any time while downloading or using our mobile application or our services, except that it may be possible for Made For It to determine from an IP address the geographic location of your point of connectivity, in which case we may gather and use such general location data.
+
+• Push Notifications. We send you push notifications if you choose to receive them, letting you know when someone has sent you a message or for other service-related matters. If you wish to opt-out from receiving these types of communications, you may turn them off in your device’s settings.
+
+• Mobile Analytics. We use mobile analytics software to allow us to better understand the functionality of our mobile software on your phone. This software may record personal information, such as how often you use the application, the events that occur within the application, aggregated usage, performance data and where the application was downloaded from. We do not link the personal information we store within the analytics software to any personal information you submit within the mobile application.
+
+5. SECURITY
+
+We take the security of your personal information seriously and use reasonable electronic, personnel and physical measures to protect it from loss, theft, alteration or misuse. However, please be advised that even the best security measures cannot fully eliminate all risks. We cannot guarantee that only authorized persons will view your personal information. We are not responsible for third-party circumvention of any privacy settings or security measures.
+
+We are dedicated to protect all personal information on the app as is necessary. However, you are responsible for maintaining the confidentiality of your personal information by keeping your password and computer/mobile device access confidential. If you have an account with Made For It and believe someone has gained unauthorized access to it or your account please change your password as soon as possible. If you lose control of your account, you should notify us immediately.
+
+6. PRIVACY RIGHTS - CALIFORNIA USERS
+
+Do Not Sell My Personal Information Notice - California Consumer Privacy Act (CCPA)
+
+Made For It has not disclosed or sold any personal information to third parties for a business or commercial purpose in the preceding twelve (12) months. Made For It will not sell personal information in the future belonging to Sites' visitors, users and other consumers.
+
+If you are under 18 years of age
+
+If you have registered account with Made For It, you have the right to request the removal of unwanted personal information that you publicly post on our Sites. To request the removal of such information, please contact us using the contact information provided below. Make sure to include your account's email address and a statement that you reside in California.
+
+"Shine the Light Law"
+
+California Civil Code Section 1798.83, also known as the "Shine The Light" law, permits our users who are California residents to request and obtain from us, once a year and free of charge, personal information about the personal information (if any) we disclosed to third parties for direct marketing purposes in the preceding calendar year. If applicable, this personal information would include a list of the categories of the personal information that was shared and the names and addresses of all third parties with which we shared personal information in the immediately preceding calendar year. If you are a California resident and would like to make such a request, please submit your request in writing to the address listed below.
+
+7. CHILDREN
+
+The Children's Online Privacy Protection Act ("COPPA") protects the online privacy of children under 13 years of age. We do not knowingly collect or maintain personal information from anyone under the age of 13, unless or except as permitted by law. Any person who provides personal information through the Sites represents to us that he or she is 13 years of age or older. If we learn that personal information has been collected from a user under 13 years of age on or through the app, then we will take the appropriate steps to cause this personal information to be deleted. If you are the parent or legal guardian of a child under 13 who has become a member of the app or has otherwise transferred personal information to the app, please contact Made For It using our contact personal information below to have that child's account terminated and personal information deleted.
+
+8. DO-NOT-TRACK NOTICE 
+
+Most web browsers and some mobile operating systems include a Do-Not-Track ("DNT") feature or setting you can activate to signal your privacy preference not to have data about your online browsing activities monitored and collected. Because there is not yet a common understanding of how to interpret the DNT signal, the app currently does not respond to DNT browser signals or mechanisms.
+
+9. GOVERNING LAW
+
+Disputes over privacy issues contained in this Privacy Notice will be governed by the law of the Commonwealth of Virginia. You also agree to abide by any limitation on damages contained in our Terms of Use, or other agreement that we have with you.
+
+10. PRIVACY NOTICE CHANGES
+
+Made For It may, in its sole discretion, change this Privacy Notice from time to time. Any and all changes to Made For It’s Privacy Notice will be reflected on this page and the date of the new version will be stated at the top of this Privacy Notice. Unless stated otherwise, our current Privacy Notice applies to all personal information that we have about you and your account. Users should regularly check this page for any changes to this Privacy Notice. Made For It will always post new versions of the Privacy Notice on the app. However, Made For It may, as determined in its discretion, decide to notify users of changes made to this Privacy Notice via email or otherwise. Accordingly, it is important that users always maintain and update their contact personal information.
+
+11. CONTACT
+
+If you have any questions regarding our Privacy Notice, please contact us at:
+
+Made For It
+Email: madeforit.developer@gmail.com
+
+
