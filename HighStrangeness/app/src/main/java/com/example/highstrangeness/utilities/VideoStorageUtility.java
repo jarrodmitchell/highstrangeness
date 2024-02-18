@@ -106,7 +106,11 @@ public class VideoStorageUtility {
         Log.d(TAG, "getThumbnailFromVideo: " + videoPath);
         mediaMetadataRetriever.setDataSource(videoPath, new HashMap<>());
         Bitmap bitmap = mediaMetadataRetriever.getFrameAtTime();
-        mediaMetadataRetriever.release();
+        try {
+            mediaMetadataRetriever.release();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         if (bitmap != null) {
             Bitmap.createScaledBitmap(bitmap, 75, 75, false);
             return bitmap;
